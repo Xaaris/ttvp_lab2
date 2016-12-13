@@ -40,8 +40,13 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		chord1.broadcast(null, null);
-//		chord2.broadcast(null, null);
+//		chord1.broadcast(null, null);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		chord2.broadcast(null, null);
 //		chord3.broadcast(null, null);
 
 	}
