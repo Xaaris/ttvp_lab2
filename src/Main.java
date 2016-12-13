@@ -17,32 +17,25 @@ public class Main {
 		URL secondURL = new URL(protocol + "://localhost:8081/");
 		URL thirdURL = new URL(protocol + "://localhost:8082/");
 		
-		Chord chord1 = new ChordImpl();
-		Chord chord2 = new ChordImpl();
-		Chord chord3 = new ChordImpl();
+		ChordImpl chord1 = new ChordImpl();
+		ChordImpl chord2 = new ChordImpl();
+		ChordImpl chord3 = new ChordImpl();
 		
-		NotifyCallback notifyCallback = new NotifyCallback() {
-
-			@Override
-			public void retrieved(ID target) {
-			}
-
-			@Override
-			public void broadcast(ID source, ID target, Boolean hit) {
-			}
-		};
+		NotifyCallbackImpl notifyCallback1 = new NotifyCallbackImpl(chord1);
+		NotifyCallbackImpl notifyCallback2 = new NotifyCallbackImpl(chord2);
+		NotifyCallbackImpl notifyCallback3 = new NotifyCallbackImpl(chord3);
 		
-		chord1.setCallback(notifyCallback);
+		chord1.setCallback(notifyCallback1);
 		chord1.create(localURL);
 
-		chord2.setCallback(notifyCallback);
+		chord2.setCallback(notifyCallback2);
 		chord2.join(secondURL, localURL);
 		
-		chord3.setCallback(notifyCallback);
+		chord3.setCallback(notifyCallback3);
 		chord3.join(thirdURL, secondURL);
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
