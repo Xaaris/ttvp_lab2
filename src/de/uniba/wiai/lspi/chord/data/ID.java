@@ -456,12 +456,12 @@ public final class ID implements Comparable<ID>, Serializable {
 	public BigInteger distanceTo(ID otherID) {
 		if (this.toBigInteger().compareTo(otherID.toBigInteger()) > 0 ) {
 			//if otherID is smaller than this ID
-			System.out.println(this.toBigInteger() + "\nis bigger than \n" + otherID.toBigInteger());
-			System.out.println("returns: \n" + otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger()))));
+//			System.out.println(this.toBigInteger() + "\nis bigger than \n" + otherID.toBigInteger());
+//			System.out.println("returns: \n" + otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger()))));
 			return otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger())));
 		}else{
-			System.out.println(this.toBigInteger() + "\nis smaller than \n" + otherID.toBigInteger());
-			System.out.println("returns: \n" + this.toBigInteger().subtract(otherID.toBigInteger()));
+//			System.out.println(this.toBigInteger() + "\nis smaller than \n" + otherID.toBigInteger());
+//			System.out.println("returns: \n" + otherID.toBigInteger().subtract(this.toBigInteger()));
 			return otherID.toBigInteger().subtract(this.toBigInteger());
 		}
 	}
