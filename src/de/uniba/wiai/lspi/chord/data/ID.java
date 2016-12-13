@@ -28,6 +28,7 @@
 package de.uniba.wiai.lspi.chord.data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
@@ -450,6 +451,15 @@ public final class ID implements Comparable<ID>, Serializable {
 		// second interval: [minID, toID)
 		(!minID.equals(toID) && this.compareTo(minID) >= 0 && this
 				.compareTo(toID) < 0));
+	}
+	
+	public BigInteger distanceTo(ID otherID) {
+		if (this.toBigInteger().compareTo(otherID.toBigInteger()) > 0 ) {
+			//if otherID is smaller than this ID
+			return otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger())));
+		}else{
+			return this.toBigInteger().subtract(otherID.toBigInteger());
+		}
 	}
 
 }

@@ -67,6 +67,8 @@ import de.uniba.wiai.lspi.util.logging.Logger;
  * @version 1.0.5
  */
 public final class ChordImpl implements Chord, Report, AsynChord {
+	
+    private int lastSeenTransactionID = 0;
 
     /**
 	 * Number of threads to allow concurrent invocations of asynchronous
@@ -1117,23 +1119,27 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 	public void broadcast (ID target, Boolean hit) {
 		System.out.println("ChordImpl Broadcast of node: " + getURL());
 		this.logger.debug("App called broadcast");
-//		try {
-//			localNode.broadcast(null);
-//		} catch (CommunicationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		for (Node node : getFingerTable()) {
-			Broadcast b = new Broadcast(null, getID(), node.getNodeID(), 0, false);
-			try {
-				node.broadcast(b);
-			} catch (CommunicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+        Broadcast broadcast = new Broadcast(this.getPredecessorID(), this.localNode.getNodeID(), target,
+                this.lastSeenTransactionID + 1, hit);
+
+        try {
+            this.localNode.broadcast(broadcast);
+            this.logger.debug("lastSeenTransactionID: " + this.lastSeenTransactionID);
+            System.out.println("lastSeenTransactionID: " + this.lastSeenTransactionID);
+        } catch (CommunicationException e) {
+            e.printStackTrace();
+        }
 		
 	}
+	
+    public void setLastSeenTransactionID(int lastSeenTransactionID) {
+        this.lastSeenTransactionID = lastSeenTransactionID;
+    }
+
+    public int getLastSeenTransactionID() {
+        return this.lastSeenTransactionID;
+    }
 	
 	public void setCallback (NotifyCallback callback) {
 		if (callback == null) {

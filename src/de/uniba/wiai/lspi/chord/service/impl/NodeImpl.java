@@ -30,6 +30,8 @@ package de.uniba.wiai.lspi.chord.service.impl;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -433,17 +435,63 @@ public final class NodeImpl extends Node {
 		if (this.logger.isEnabledFor(DEBUG)) {
 			this.logger.debug(" Send broadcast message");
 		}
-		System.out.println("FINGERTABLE of node: " + impl.getURL());
-		for (Node node : impl.getFingerTable()) {
+		System.out.println("FINGERTABLE of node: " + impl.getURL() + "\n==========================");
+		for (Node node : this.references.getFingerTableEntries()) {
 			System.out.println(node.getNodeURL().toString());
 		}
-		System.out.println("FINGERTABLE Done");
+		System.out.println("==========================");
 		
 		
-		// finally inform application
-//		if (this.notifyCallback != null) {
-//			this.notifyCallback.broadcast(info.getSource(), info.getTarget(), info.getHit());
-//		}
+		if (this.logger.isEnabledFor(DEBUG)) {
+            this.logger.debug(" Send broadcast message");
+        }
+
+        // lastSeenTransactionID updaten
+        if (impl.getLastSeenTransactionID() < info.getTransaction()) {
+            impl.setLastSeenTransactionID(info.getTransaction());
+        }else{
+        	System.out.println("Message had old transactionID and was discarded. trnID: " + info.getTransaction());
+        	//If transaction id is old -> ignore broadcast
+        	return;
+        }
+
+        // finally inform application
+        if (this.notifyCallback != null) {
+            this.notifyCallback.broadcast(info.getSource(), info.getTarget(), info.getHit());
+        }
+        
+        Node lastNode = null;
+        ArrayList<Node> cleanedFingerTable = new ArrayList<>();
+        for (Node node : this.references.getFingerTableEntries()) {
+			if (lastNode != null || lastNode != node) {
+				lastNode = node;
+				cleanedFingerTable.add(node);
+			}
+		}
+        for (int i = 0; i < cleanedFingerTable.size(); i++) {
+        	
+        	//compare distance to target with distance to range.
+        	//If out of range -> return
+        	if (this.nodeID.distanceTo(cleanedFingerTable.get(i).getNodeID()).compareTo(this.nodeID.distanceTo(info.getRange())) > 0 ){
+        		return;
+        	}
+        	ID range;
+            if (i == cleanedFingerTable.size() - 1) {
+                // If last entry get predecessor of this node
+                range = this.references.getPredecessor().getNodeID();
+            } else {
+                // otherwise get range to next node
+                range = cleanedFingerTable.get(i + 1).getNodeID();
+            }
+            Broadcast broadcast = new Broadcast(range, info.getSource(), info.getTarget(), info.getTransaction(), info.getHit());
+            
+            try {
+            	cleanedFingerTable.get(i).broadcast(broadcast);
+                System.out.println("Broadcast sent from "+ getNodeURL() + " with transaction ID: " + info.getTransaction());
+            } catch (CommunicationException e) {
+                e.printStackTrace();
+            }
+		}
 	}
 
 }

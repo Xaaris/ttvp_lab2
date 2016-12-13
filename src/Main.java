@@ -41,6 +41,12 @@ public class Main {
 		chord3.setCallback(notifyCallback);
 		chord3.join(thirdURL, secondURL);
 		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		chord1.broadcast(null, null);
 //		chord2.broadcast(null, null);
 //		chord3.broadcast(null, null);
