@@ -19,7 +19,7 @@ public class NotifyCallbackImpl implements NotifyCallback {
 
 	@Override
 	public void broadcast(ID source, ID target, Boolean hit) {
-		System.out.println( chordImpl.getURL() + ": Broadcast was seen from source: " + source + " target: " + target + " hit: " + hit);
+		System.out.println( chordImpl.getID().shortIDAsString() + ": Broadcast was seen from source: " + source.shortIDAsString() + " target: " + target.shortIDAsString() + " hit: " + hit);
 		// TODO Log broadcast and act accordingly
 		
 	}

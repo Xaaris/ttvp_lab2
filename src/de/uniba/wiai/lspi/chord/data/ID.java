@@ -465,5 +465,31 @@ public final class ID implements Comparable<ID>, Serializable {
 			return otherID.toBigInteger().subtract(this.toBigInteger());
 		}
 	}
+	
+	/**
+	 * Returns a short string representing the ID. Might not be unique
+	 * 
+	 * @return Decimal string of ID
+	 */
+	public final String shortIDAsString() {
+		if (this.stringRepresentation == null) {
+			int rep = ID.displayedRepresentation;
+			switch (rep) {
+			case 0:
+				this.stringRepresentation = this
+				.toBinaryString(ID.numberOfDisplayedBytes);
+				break; 
+			case 1:
+				this.stringRepresentation = this
+				.toDecimalString(ID.numberOfDisplayedBytes);
+				break; 
+			default:
+				this.stringRepresentation = this
+						.toHexString(ID.numberOfDisplayedBytes);
+			}
+
+		}
+		return this.stringRepresentation.substring(0, 5);
+	}
 
 }

@@ -30,6 +30,7 @@ package de.uniba.wiai.lspi.chord.service.impl;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -415,15 +416,15 @@ public final class NodeImpl extends Node {
 	@Override
 	public final void broadcast(Broadcast info) throws CommunicationException {
 
-		System.out.println("NodeImpl Broadcast of node: " + impl.getURL());
+//		System.out.println("NodeImpl Broadcast of node: " + impl.getURL());
 		if (this.logger.isEnabledFor(DEBUG)) {
 			this.logger.debug(" Send broadcast message");
 		}
-		System.out.println("FINGERTABLE of node: " + impl.getURL() + "\n==========================");
-		for (Node node : this.references.getFingerTableEntries()) {
-			System.out.println(node.getNodeURL().toString());
-		}
-		System.out.println("==========================");
+//		System.out.println("FINGERTABLE of node: " + impl.getURL() + "\n==========================");
+//		for (Node node : this.references.getFingerTableEntries()) {
+//			System.out.println(node.getNodeURL().toString());
+//		}
+//		System.out.println("==========================");
 
 		if (this.logger.isEnabledFor(DEBUG)) {
 			this.logger.debug(" Send broadcast message");
@@ -433,7 +434,7 @@ public final class NodeImpl extends Node {
 		if (impl.getLastSeenTransactionID() < info.getTransaction()) {
 			impl.setLastSeenTransactionID(info.getTransaction());
 		} else {
-			System.out.println(this.getNodeURL() + " Message had old transactionID and was discarded. trnID: " + info.getTransaction());
+			System.out.println(this.getNodeID().shortIDAsString() + ": Message had old transactionID and was discarded. trnID: " + info.getTransaction());
 			// If transaction id is old -> ignore broadcast
 			return;
 		}
@@ -443,38 +444,44 @@ public final class NodeImpl extends Node {
 			this.notifyCallback.broadcast(info.getSource(), info.getTarget(), info.getHit());
 		}
 
-		Node lastNode = null;
-		ArrayList<Node> cleanedFingerTable = new ArrayList<>();
-		for (Node node : this.references.getFingerTableEntries()) {
-			if (lastNode != null || lastNode != node) {
-				lastNode = node;
-				cleanedFingerTable.add(node);
-			}
-		}
+		List<Node> fingerTable = this.references.getFingerTableEntries();
+	
 
-		for (int i = 0; i < cleanedFingerTable.size(); i++) {
+		for (int i = 0; i < fingerTable.size(); i++) {
 
 			// compare distance to target with distance to range.
 			// If out of range -> return
+			BigInteger distanceToOtherNode = this.getNodeID().distanceTo(fingerTable.get(i).getNodeID());
+			BigInteger distanceToRange = this.getNodeID().distanceTo(info.getRange());
 			
-			if (this.getNodeID().distanceTo(cleanedFingerTable.get(i).getNodeID())
-					.compareTo(this.getNodeID().distanceTo(info.getRange())) > 0) {
+			if (distanceToOtherNode.compareTo(distanceToRange) > 0) {
 				//ERROR here.. fliegt raus 
-				System.out.println("nodeID: " + this.getNodeID() + "\notherNoderID: " + cleanedFingerTable.get(i).getNodeID() + "\nrange: " + info.getRange());
+				System.out.println("============RAUSGEFLOGEN=================\ndistanceToOtherNode: " + ID.valueOf(distanceToOtherNode).shortIDAsString() + "\ndistanceToRange: " + ID.valueOf(distanceToRange).shortIDAsString() + "\nnodeID: " + this.getNodeID().shortIDAsString() + "\notherNoderID: " + fingerTable.get(i).getNodeID().shortIDAsString() + "\nrange: " + info.getRange().shortIDAsString() + "\n=========================================");
 				return;
 			}
+
+	           
+	           
 			ID range;
-			if (i == cleanedFingerTable.size() - 1) {
-				// If last entry get predecessor of this node
-				range = this.references.getPredecessor().getNodeID();
-			} else {
-				// otherwise get range to next node
-				range = cleanedFingerTable.get(i + 1).getNodeID();
-			}
+			
+			if (i < fingerTable.size() - 1 &&fingerTable.get(i+1).getNodeID().isInInterval(fingerTable.get(i).getNodeID(), info.getRange())) {
+				//range to next node in fingertable
+                range = fingerTable.get(i + 1).getNodeID();
+
+            } else {
+            	//if last node -> original range
+                range = info.getRange();
+
+            }
+
 			Broadcast broadcast = new Broadcast(range, info.getSource(), info.getTarget(), info.getTransaction(),
 					info.getHit());
+			System.out.println(this.getNodeID().shortIDAsString() + ": Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString());
 			
-			new AsyncBroadcast(cleanedFingerTable.get(i), broadcast).start();
+			// Async Broadcast
+			new AsyncBroadcast(fingerTable.get(i), broadcast).start();
+			// Sync Broadcast
+//			fingerTable.get(i).broadcast(broadcast);
 		}
 	}
 

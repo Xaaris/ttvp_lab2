@@ -1,6 +1,12 @@
+import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.Delayed;
 
+import de.uniba.wiai.lspi.chord.com.Node;
+import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.data.URL;
 import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
@@ -20,8 +26,8 @@ public class Main {
 	public static void main(String[] args) {
 		PropertiesLoader.loadPropertyFile();
 
-		// localTest();
-		runGame();
+		localTest();
+		// runGame();
 
 	}
 
@@ -70,66 +76,76 @@ public class Main {
 	}
 
 	private static void localTest() {
+		
+		ArrayList<ChordImpl> chordList = new ArrayList<>();
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.LOCAL_PROTOCOL);
 
 		URL localURL = null;
-		URL secondURL = null;
-		URL thirdURL = null;
+
 		try {
 			localURL = new URL(protocol + "://localhost:8080/");
-			secondURL = new URL(protocol + "://localhost:8081/");
-			thirdURL = new URL(protocol + "://localhost:8082/");
 		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		ChordImpl chord1 = new ChordImpl();
-		ChordImpl chord2 = new ChordImpl();
-		ChordImpl chord3 = new ChordImpl();
+		ChordImpl chordLeader = new ChordImpl();
 
-		NotifyCallbackImpl notifyCallback1 = new NotifyCallbackImpl(chord1);
-		NotifyCallbackImpl notifyCallback2 = new NotifyCallbackImpl(chord2);
-		NotifyCallbackImpl notifyCallback3 = new NotifyCallbackImpl(chord3);
+		NotifyCallbackImpl notifyCallback = new NotifyCallbackImpl(chordLeader);
 
-		chord1.setCallback(notifyCallback1);
+		chordLeader.setCallback(notifyCallback);
 		try {
-			chord1.create(localURL);
+			chordLeader.create(localURL);
 		} catch (ServiceException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		chord2.setCallback(notifyCallback2);
-		try {
-			chord2.join(secondURL, localURL);
-		} catch (ServiceException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		chordList.add(chordLeader);
+		System.out.println("New game created. Bootstrap node with ID: " + chordLeader.getID().shortIDAsString());
+		
+		for (int i = 1; i < 5; i++) {
+			
+			delay(200);
+			
+			ChordImpl chordJoiner = new ChordImpl();
+			NotifyCallbackImpl notifyCallbackJoiner = new NotifyCallbackImpl(chordJoiner);
+			chordJoiner.setCallback(notifyCallbackJoiner);
+			URL joinURL = null;
+			try {
+				joinURL = new URL(protocol + "://localhost:808" + i + "/");
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				chordJoiner.join(joinURL, localURL);
+			} catch (ServiceException e1) {
+				e1.printStackTrace();
+			}
+			chordList.add(chordJoiner);
+			System.out.println("New node joined with ID: " + chordJoiner.getID().shortIDAsString());
+			
+	
 		}
 
-		chord3.setCallback(notifyCallback3);
-		try {
-			chord3.join(thirdURL, secondURL);
-		} catch (ServiceException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		Random r = new Random();
+		BigInteger ranID = new BigInteger(160, r);
+		delay(2000);
+		
+		for (ChordImpl tmpChord : chordList) {
+			System.out.println("===============");
+			System.out.println("Fingertable of: " + tmpChord.getID().shortIDAsString());
+			for (Node finger : tmpChord.getFingerTable()) {
+				System.out.println(finger.getNodeID().shortIDAsString());
+			}
+			System.out.println("===============");
 		}
-
+		chordLeader.broadcast(ID.valueOf(ranID), false);
+	}
+	
+	public static void delay(int ms) {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(ms);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		// chord1.broadcast(null, null);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		chord2.broadcast(null, null);
-		// chord3.broadcast(null, null);
 	}
 
 }

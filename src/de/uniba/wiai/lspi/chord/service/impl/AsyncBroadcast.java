@@ -16,11 +16,10 @@ public class AsyncBroadcast extends Thread {
 	}
 	
 	public void run() {
-		
         
             try {
             	node.broadcast(broadcast);
-//                System.out.println("Broadcast sent from "+ getNodeURL() + " with transaction ID: " + info.getTransaction());
+            	System.out.println("Broadcast was rebroadcasted by: " + node.getNodeID().shortIDAsString());
             } catch (CommunicationException e) {
                 e.printStackTrace();
             }

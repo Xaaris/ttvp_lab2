@@ -528,12 +528,22 @@ final class FingerTable {
 	 * 
 	 */
 	final List<Node> getFingerTableEntries() {
-		Set<Node> result = new HashSet<Node>();
+//		Set<Node> result = new HashSet<Node>();
+//		for (int j = 0; j < this.remoteNodes.length; j++) {
+//			if (this.getEntry(j) != null) {
+//				result.add(this.getEntry(j));
+//			}
+//		}
+		Node lastNode = null;
+		ArrayList<Node> retList = new ArrayList<>();
 		for (int j = 0; j < this.remoteNodes.length; j++) {
 			if (this.getEntry(j) != null) {
-				result.add(this.getEntry(j));
+				if (lastNode != this.getEntry(j)) {
+					lastNode = this.getEntry(j);
+					retList.add(this.getEntry(j));
+				}
 			}
 		}
-		return new ArrayList<Node>(result);
+		return retList;
 	}
 }
