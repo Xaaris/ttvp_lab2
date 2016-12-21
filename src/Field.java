@@ -22,6 +22,13 @@ public class Field {
 	public ID toID(){
 		return new ID(startID.toBigInteger().add((startID.distanceTo(endID).divide(new BigInteger("2")))).toByteArray());
 	}
+	
+	public boolean isIDInField(ID id) {
+		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
+			return false;
+		}
+		return true;
+	}
 
 	public FieldState getState() {
 		return state;

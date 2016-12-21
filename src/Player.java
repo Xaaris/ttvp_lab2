@@ -61,21 +61,26 @@ public class Player {
 		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 0] = new Field(lowerID, endID);
 
 	}
-	
-	public Field getFieldForID(ID id){
-		if (isIDInPlayerSector(id)){
-			//TODO: implement
+
+	public Field getFieldForID(ID id) {
+		if (isIDInPlayerSector(id)) {
+			for (Field field : playerFields) {
+				if (field.isIDInField(id)){
+					return field;
+				}
+			}
 			return null;
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
-	public boolean isIDInPlayerSector(ID id){
-		//TODO: implement
-		return false;
+
+	public boolean isIDInPlayerSector(ID id) {
+		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
+			return false;
+		}
+		return true;
 	}
-	
 
 	@Override
 	public int hashCode() {
