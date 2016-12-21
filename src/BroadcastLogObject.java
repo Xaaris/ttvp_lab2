@@ -23,5 +23,9 @@ public class BroadcastLogObject {
 	public boolean isHit() {
 		return hit;
 	}
+	
+	public String toString(){
+		return "[Broadcast: Source: " + source.shortIDAsString() + " target: " + target.shortIDAsString() + " hit: " + hit + "]";
+	}
 
 }

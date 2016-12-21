@@ -137,6 +137,10 @@ public class Main {
 			System.out.println("===============");
 		}
 		chordLeader.broadcast(ID.valueOf(ranID), false);
+		
+		delay(3000);
+		BroadcastLogger.getInstance().printBroadcastHistory();
+		
 	}
 	
 	public static void delay(int ms) {

@@ -5,9 +5,11 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 public class NotifyCallbackImpl implements NotifyCallback {
 	
 	private ChordImpl chordImpl = null;
+	private BroadcastLogger broadcastLogger = null;
 	
 	public NotifyCallbackImpl(ChordImpl chordImpl) {
 		this.chordImpl = chordImpl;
+		broadcastLogger = BroadcastLogger.getInstance();
 	}
 
 	@Override
@@ -21,6 +23,8 @@ public class NotifyCallbackImpl implements NotifyCallback {
 	public void broadcast(ID source, ID target, Boolean hit) {
 		System.out.println( chordImpl.getID().shortIDAsString() + ": Broadcast was seen from source: " + source.shortIDAsString() + " target: " + target.shortIDAsString() + " hit: " + hit);
 		// TODO Log broadcast and act accordingly
+		BroadcastLogObject broadcastLogObj = new BroadcastLogObject(source, target, hit);
+		broadcastLogger.addBroadcast(broadcastLogObj);
 		
 	}
 

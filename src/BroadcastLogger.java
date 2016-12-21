@@ -23,4 +23,12 @@ public class BroadcastLogger {
 	public void addBroadcast(BroadcastLogObject broadcast){
 		broadcastList.add(broadcast);
 	}
+	
+	public void printBroadcastHistory(){
+		System.out.println("=================Broadcast History=================");
+		for (BroadcastLogObject broadcastLogObject : broadcastList) {
+			System.out.println(broadcastLogObject);
+		}
+		System.out.println("===================================================");
+	}
 }

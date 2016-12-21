@@ -15,7 +15,6 @@ public class Player {
 	}
 
 	public int getNumberOfShipsLeft() {
-		// TODO: implememt
 		int countOfShipsLeft = Constants.MAXSHIPS;
 		for (Field field : playerFields) {
 			if (field.getState() == FieldState.SHIPWRECK) {
