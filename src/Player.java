@@ -44,7 +44,7 @@ public class Player {
 		BigInteger sectorSize = startID.distanceTo(endID);
 		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
 		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
-		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
+//		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
 
 		BigInteger currentBigInt = startID.toBigInteger();
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
