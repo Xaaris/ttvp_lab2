@@ -57,8 +57,39 @@ public class Player {
 		}
 
 		ID lowerID = new ID(currentBigInt.toByteArray());
-		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 0] = new Field(lowerID, endID);
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1] = new Field(lowerID, endID);
 
+	}
+
+	public ID getStartID() {
+		return startID;
+	}
+
+	public ID getEndID() {
+		return endID;
+	}
+	
+	public void changeSectorSize(ID newStartID, ID newEndID){
+		this.startID = newStartID;
+		this.endID = newEndID;
+		BigInteger sectorSize = startID.distanceTo(endID);
+		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
+		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
+//		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
+
+		BigInteger currentBigInt = startID.toBigInteger();
+		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
+			ID lowerID = new ID(currentBigInt.toByteArray());
+			ID upperID = new ID(currentBigInt.add(fieldSize).subtract(new BigInteger("1")).toByteArray());
+			currentBigInt = currentBigInt.add(fieldSize);
+
+			playerFields[i].setStartID(lowerID);
+			playerFields[i].setEndID(upperID);
+		}
+
+		ID lowerID = new ID(currentBigInt.toByteArray());
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(lowerID);
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(endID);
 	}
 
 	public Field getFieldForID(ID id) {

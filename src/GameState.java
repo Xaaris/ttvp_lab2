@@ -45,10 +45,6 @@ public class GameState {
 		return listOfPlayers;
 	}
 	
-	public Player getSelf(){
-		return listOfPlayers.get(0);
-	}
-	
 	public ArrayList<Player> getOtherPlayers(){
 		ArrayList<Player> retList = new ArrayList<>();
 		for (int i = 1; i < listOfPlayers.size(); i++) {

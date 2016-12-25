@@ -1,8 +1,12 @@
+import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class Main {
 
 	public static void main(String[] args) {
-	ChordStart chord = new ChordStart();	
+	ChordImpl chord = ChordStart.createNetwork();
+	GameLogic gameLogic = GameLogic.getInstance();
+	gameLogic.setChord(chord);
+	gameLogic.initializeGame();
 	}
 
 }

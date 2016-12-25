@@ -5,8 +5,8 @@ import de.uniba.wiai.lspi.chord.data.ID;
 public class Field {
 	
 	private FieldState state = FieldState.UNKNOWN;
-	private final ID startID;
-	private final ID endID; 
+	private ID startID;
+	private ID endID; 
 	
 	public Field(ID startID, ID endID){
 		this.startID = startID;
@@ -45,6 +45,15 @@ public class Field {
 	public ID getEndID() {
 		return endID;
 	}
+	
+	public void setStartID(ID newStartID){
+		this.startID = newStartID;
+	}
+	
+	public void setEndID(ID newEndID){
+		this.endID = newEndID;
+	}
+	
 	
 	
 
