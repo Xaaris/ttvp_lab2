@@ -33,7 +33,7 @@ public class GameLogic {
 			System.out.println(id.shortIDAsString());
 		}
 		for (ID id : playerIDs) {
-			createPlayerFromID(id);
+			gameState.createPlayerFromID(id);
 		}
 
 		if (checkIfFirstPlayer()) {
@@ -66,23 +66,7 @@ public class GameLogic {
 		}
 	}
 
-	private void createPlayerFromID(ID nodeID) {
-		if (gameState.getListOfPlayers().isEmpty()) {
-			// TODO: fails on wrap around point, very unlikely
-			ID startID = ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE));
-			Player tmpPlayer = new Player(startID, nodeID);
-			gameState.addPlayer(tmpPlayer);
-		} else {
-			for (Player player : gameState.getListOfPlayers()) {
-				if (player.isIDInPlayerSector(nodeID)) {
-					ID startIDForNewPlayer = player.getStartID();
-					Player newPlayer = new Player(startIDForNewPlayer, nodeID);
-					gameState.addPlayer(newPlayer);
-					player.changeSectorSize(ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE)), player.getEndID());
-				}
-			}
-		}
-	}
+	
 
 	public Player getSelf() {
 		for (Player player : gameState.getListOfPlayers()) {
@@ -103,6 +87,26 @@ public class GameLogic {
 
 	public void setChord(ChordImpl chord) {
 		GameLogic.chord = chord;
+	}
+	
+	public void handleHit(ID target){
+		if (getSelf().isIDInPlayerSector(target)){
+			Field targetField = getSelf().getFieldForID(target);
+			if (targetField.getState() == FieldState.SHIP){
+				targetField.setState(FieldState.SHIPWRECK);
+				System.out.println("Our ship got hit! Ships left: " + getSelf().getNumberOfShipsLeft());
+				gameState.updateGameState();
+				chord.broadcast(target, true);
+			}else{
+				System.out.println("Shot missed!");
+				chord.broadcast(target, false);
+			}
+		}
+	}
+	
+	public void actOnReceivedBroadcast(BroadcastLogObject broadcast){
+		BroadcastLogger.getInstance().addBroadcast(broadcast);
+		gameState.updateGameState();
 	}
 
 	public void shoot() {

@@ -1,30 +1,26 @@
 import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.service.NotifyCallback;
-import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class NotifyCallbackImpl implements NotifyCallback {
 	
-	private ChordImpl chordImpl = null;
-	private BroadcastLogger broadcastLogger = null;
+	private GameLogic gameLogic = null;
 	
-	public NotifyCallbackImpl(ChordImpl chordImpl) {
-		this.chordImpl = chordImpl;
-		broadcastLogger = BroadcastLogger.getInstance();
+	public NotifyCallbackImpl() {
+		this.gameLogic = GameLogic.getInstance();
 	}
 
 	@Override
 	public void retrieved(ID target) {
-		// TODO implement our logic
-		chordImpl.broadcast(target, false);
-		
+		System.out.println("Received a shot at: " + target.shortIDAsString());
+		gameLogic.handleHit(target);
 	}
 
 	@Override
 	public void broadcast(ID source, ID target, Boolean hit) {
-		System.out.println( chordImpl.getID().shortIDAsString() + ": Broadcast was seen from source: " + source.shortIDAsString() + " target: " + target.shortIDAsString() + " hit: " + hit);
+		System.out.println("Broadcast was seen from source: " + source.shortIDAsString() + " target: " + target.shortIDAsString() + " hit: " + hit);
 		// TODO Log broadcast and act accordingly
 		BroadcastLogObject broadcastLogObj = new BroadcastLogObject(source, target, hit);
-		broadcastLogger.addBroadcast(broadcastLogObj);
+		gameLogic.actOnReceivedBroadcast(broadcastLogObj);
 		
 	}
 

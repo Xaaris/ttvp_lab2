@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import de.uniba.wiai.lspi.chord.data.ID;
@@ -25,7 +26,7 @@ public class GameState {
 		updateLED();
 	}
 
-	public void updateLED() {
+	private void updateLED() {
 		// TODO: implement (coap)
 	}
 
@@ -33,13 +34,25 @@ public class GameState {
 
 		if (!listOfPlayers.contains(player)) {
 			listOfPlayers.add(player);
-			gamestateRebuild();
 		}
 	}
-
-	private void gamestateRebuild() {
-		// TODO: implement
-
+	
+	public void createPlayerFromID(ID nodeID) {
+		if (listOfPlayers.isEmpty()) {
+			// TODO: fails on wrap around point, very unlikely
+			ID startID = ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE));
+			Player tmpPlayer = new Player(startID, nodeID);
+			addPlayer(tmpPlayer);
+		} else {
+			for (Player player : listOfPlayers) {
+				if (player.isIDInPlayerSector(nodeID)) {
+					ID startIDForNewPlayer = player.getStartID();
+					Player newPlayer = new Player(startIDForNewPlayer, nodeID);
+					addPlayer(newPlayer);
+					player.changeSectorSize(ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE)), player.getEndID());
+				}
+			}
+		}
 	}
 
 	public ArrayList<Player> getListOfPlayers() {

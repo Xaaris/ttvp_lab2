@@ -34,7 +34,7 @@ public class ChordStart {
 
 		ChordImpl chordLeader = new ChordImpl();
 
-		NotifyCallbackImpl notifyCallback = new NotifyCallbackImpl(chordLeader);
+		NotifyCallbackImpl notifyCallback = new NotifyCallbackImpl();
 
 		chordLeader.setCallback(notifyCallback);
 		try {
@@ -50,7 +50,7 @@ public class ChordStart {
 			delay(200);
 			
 			ChordImpl chordJoiner = new ChordImpl();
-			NotifyCallbackImpl notifyCallbackJoiner = new NotifyCallbackImpl(chordJoiner);
+			NotifyCallbackImpl notifyCallbackJoiner = new NotifyCallbackImpl();
 			chordJoiner.setCallback(notifyCallbackJoiner);
 			URL joinURL = null;
 			try {
@@ -103,7 +103,7 @@ public class ChordStart {
 
 		ChordImpl chordImpl = new ChordImpl();
 
-		NotifyCallbackImpl notifyCallback = new NotifyCallbackImpl(chordImpl);
+		NotifyCallbackImpl notifyCallback = new NotifyCallbackImpl();
 
 		chordImpl.setCallback(notifyCallback);
 
