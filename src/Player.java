@@ -41,6 +41,7 @@ public class Player {
 	}
 
 	public void initializeSector() {
+		playerFields = new Field[Constants.NUMBEROFFIELDSINSECTOR];
 		BigInteger sectorSize = startID.distanceTo(endID);
 		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
 		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
@@ -49,7 +50,7 @@ public class Player {
 		BigInteger currentBigInt = startID.toBigInteger();
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
 			ID lowerID = new ID(currentBigInt.toByteArray());
-			ID upperID = new ID(currentBigInt.add(fieldSize).subtract(new BigInteger("1")).toByteArray());
+			ID upperID = new ID(currentBigInt.add(fieldSize).subtract(BigInteger.ONE).toByteArray());
 			currentBigInt = currentBigInt.add(fieldSize);
 
 			Field tmpField = new Field(lowerID, upperID);

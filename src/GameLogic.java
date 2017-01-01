@@ -1,5 +1,6 @@
 import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 
 import de.uniba.wiai.lspi.chord.com.Node;
@@ -27,10 +28,14 @@ public class GameLogic {
 
 	public void initializeGame() {
 		lookUpKnownNodeIDsAfterInitialization();
+		System.out.println("Known Players:");
+		for (ID id : playerIDs) {
+			System.out.println(id.shortIDAsString());
+		}
 		for (ID id : playerIDs) {
 			createPlayerFromID(id);
 		}
-		
+
 		if (checkIfFirstPlayer()) {
 			System.out.println("YAY, we are first!");
 
@@ -38,7 +43,7 @@ public class GameLogic {
 			System.err.println("Press enter to start shooting.\n\n");
 			new Scanner(System.in).nextLine();
 			shoot();
-			
+
 		} else {
 			System.out.println("\nWaiting for 'hightest player' to shoot...\n\n");
 		}
@@ -53,20 +58,23 @@ public class GameLogic {
 	private void lookUpKnownNodeIDsAfterInitialization() {
 
 		playerIDs.add(chord.getID());
-		playerIDs.add(chord.getPredecessorID());
+		if (chord.getPredecessorID() != null) {
+			playerIDs.add(chord.getPredecessorID());
+		}
 		for (Node node : chord.getFingerTable()) {
 			playerIDs.add(node.getNodeID());
 		}
 	}
 
 	private void createPlayerFromID(ID nodeID) {
-		if (gameState.getListOfPlayers().isEmpty()){
-			ID startID = ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE)); //TODO: fails on wrap around point
+		if (gameState.getListOfPlayers().isEmpty()) {
+			// TODO: fails on wrap around point, very unlikely
+			ID startID = ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE));
 			Player tmpPlayer = new Player(startID, nodeID);
 			gameState.addPlayer(tmpPlayer);
-		}else{
+		} else {
 			for (Player player : gameState.getListOfPlayers()) {
-				if (player.isIDInPlayerSector(nodeID)){
+				if (player.isIDInPlayerSector(nodeID)) {
 					ID startIDForNewPlayer = player.getStartID();
 					Player newPlayer = new Player(startIDForNewPlayer, nodeID);
 					gameState.addPlayer(newPlayer);
@@ -74,12 +82,11 @@ public class GameLogic {
 				}
 			}
 		}
-		
 	}
-	
-	public Player getSelf(){
+
+	public Player getSelf() {
 		for (Player player : gameState.getListOfPlayers()) {
-			if (player.isIDInPlayerSector(chord.getID())){
+			if (player.isIDInPlayerSector(chord.getID())) {
 				return player;
 			}
 		}
@@ -97,15 +104,22 @@ public class GameLogic {
 	public void setChord(ChordImpl chord) {
 		GameLogic.chord = chord;
 	}
-	
-	public void shoot(){
+
+	public void shoot() {
 		ID target = getTarget();
-		//TODO: implement
+		System.out.println("Shooting at: " + target.shortIDAsString());
+		chord.retrieve(target);
 	}
-	
-	public ID getTarget(){
-		//TODO: implement
-		return null;
+
+	public ID getTarget() {
+		Random r = new Random();
+		ID ranID = ID.valueOf(new BigInteger(160, r));
+		// if its own fields or already shot at -> generate new random ID
+		while (getSelf().isIDInPlayerSector(ranID) || gameState.getFieldForID(ranID).getState() != FieldState.UNKNOWN) {
+			ranID = ID.valueOf(new BigInteger(160, r));
+		}
+		// get middle of field
+		return gameState.getFieldForID(ranID).toID();
 	}
 
 }
