@@ -1130,7 +1130,7 @@ public final class ChordImpl implements Chord, Report, AsynChord {
         } catch (CommunicationException e) {
             e.printStackTrace();
         }
-		
+        setLastSeenTransactionID(lastSeenTransactionID + 1);
 	}
 	
     public void setLastSeenTransactionID(int lastSeenTransactionID) {

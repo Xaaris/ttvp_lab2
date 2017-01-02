@@ -426,10 +426,6 @@ public final class NodeImpl extends Node {
 //		}
 //		System.out.println("==========================");
 
-		if (this.logger.isEnabledFor(DEBUG)) {
-			this.logger.debug(" Send broadcast message");
-		}
-
 		// lastSeenTransactionID updaten
 		if (impl.getLastSeenTransactionID() < info.getTransaction()) {
 			impl.setLastSeenTransactionID(info.getTransaction());
@@ -455,23 +451,18 @@ public final class NodeImpl extends Node {
 			BigInteger distanceToRange = this.getNodeID().distanceTo(info.getRange());
 			
 			if (distanceToOtherNode.compareTo(distanceToRange) > 0) {
-				//ERROR here.. fliegt raus 
 				System.out.println("============RAUSGEFLOGEN=================\ndistanceToOtherNode: " + ID.valueOf(distanceToOtherNode).shortIDAsString() + "\ndistanceToRange: " + ID.valueOf(distanceToRange).shortIDAsString() + "\nnodeID: " + this.getNodeID().shortIDAsString() + "\notherNoderID: " + fingerTable.get(i).getNodeID().shortIDAsString() + "\nrange: " + info.getRange().shortIDAsString() + "\n=========================================");
 				return;
 			}
 
-	           
-	           
 			ID range;
 			
 			if (i < fingerTable.size() - 1 &&fingerTable.get(i+1).getNodeID().isInInterval(fingerTable.get(i).getNodeID(), info.getRange())) {
 				//range to next node in fingertable
                 range = fingerTable.get(i + 1).getNodeID();
-
             } else {
             	//if last node -> original range
                 range = info.getRange();
-
             }
 
 			Broadcast broadcast = new Broadcast(range, info.getSource(), info.getTarget(), info.getTransaction(),
