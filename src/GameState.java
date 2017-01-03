@@ -5,7 +5,7 @@ import de.uniba.wiai.lspi.chord.data.ID;
 
 public class GameState {
 
-	private ArrayList<Player> listOfPlayers;
+	private ArrayList<Player> listOfPlayers = new ArrayList<>();
 	private static GameState gameState = null;
 	private BroadcastLogger broadcastLogger = null;
 
@@ -44,14 +44,15 @@ public class GameState {
 			Player tmpPlayer = new Player(startID, nodeID);
 			addPlayer(tmpPlayer);
 		} else {
+			ID startIDForNewPlayer = null;
 			for (Player player : listOfPlayers) {
 				if (player.isIDInPlayerSector(nodeID)) {
-					ID startIDForNewPlayer = player.getStartID();
-					Player newPlayer = new Player(startIDForNewPlayer, nodeID);
-					addPlayer(newPlayer);
+					startIDForNewPlayer = player.getStartID();
 					player.changeSectorSize(ID.valueOf(nodeID.toBigInteger().add(BigInteger.ONE)), player.getEndID());
 				}
 			}
+			Player newPlayer = new Player(startIDForNewPlayer, nodeID);
+			addPlayer(newPlayer);
 		}
 	}
 

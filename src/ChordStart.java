@@ -47,7 +47,7 @@ public class ChordStart {
 		
 		for (int i = 1; i < 5; i++) {
 			
-			delay(200);
+			Util.delay(Constants.DELAY);
 			
 			ChordImpl chordJoiner = new ChordImpl();
 			NotifyCallbackImpl notifyCallbackJoiner = new NotifyCallbackImpl();
@@ -71,7 +71,7 @@ public class ChordStart {
 
 		Random r = new Random();
 		BigInteger ranID = new BigInteger(160, r);
-		delay(2000);
+		Util.delay(Constants.DELAY * 20);
 		
 		for (ChordImpl tmpChord : chordList) {
 			System.out.println("===============");
@@ -83,14 +83,36 @@ public class ChordStart {
 		}
 		chordLeader.broadcast(ID.valueOf(ranID), false);
 		
-		delay(3000);
+		Util.delay(Constants.DELAY * 20);
 		BroadcastLogger.getInstance().printBroadcastHistory();
 		
 		return chordLeader;
 		
 	}
 
-	public static ChordImpl createNetwork() {
+	public static ChordImpl createNetwork(String[] args) {
+		
+		if (args.length == 1){
+		Constants.joinOrCreate = args[0];
+		}else if (args.length == 2){
+			Constants.joinOrCreate = args[0];
+			Constants.SERVER_IP = args[1];
+		}else if (args.length == 3){
+			Constants.joinOrCreate = args[0];
+			Constants.SERVER_IP = args[1];
+			Constants.SERVER_PORT = args[2];
+		}else if (args.length == 4){
+			Constants.joinOrCreate = args[0];
+			Constants.SERVER_IP = args[1];
+			Constants.SERVER_PORT = args[2];
+			Constants.CLIENT_IP = args[3];
+		}else if (args.length == 5){
+			Constants.joinOrCreate = args[0];
+			Constants.SERVER_IP = args[1];
+			Constants.SERVER_PORT = args[2];
+			Constants.CLIENT_IP = args[3];
+			Constants.CLIENT_PORT = args[4];
+		}
 		
 		PropertiesLoader.loadPropertyFile();
 		
@@ -124,12 +146,13 @@ public class ChordStart {
 			try {
 				chordImpl.join(clientURL, localURL);
 			} catch (ServiceException e) {
+				System.out.println("Local URL: " + clientURL);
+				System.out.println("Bootstrap URL: " + localURL);
 				throw new RuntimeException("Could not join DHT!", e);
 			}
 		} else {
 			System.out.println("ERROR: choose if you want to be server or client!");
 		}
-
 		System.out.println("Chord listens on: " + localURL);
 
 		System.out.println("\n\n\n\nPress enter to start\n");
@@ -139,12 +162,6 @@ public class ChordStart {
 
 	}
 	
-	public static void delay(int ms) {
-		try {
-			Thread.sleep(ms);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 }

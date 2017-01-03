@@ -20,7 +20,13 @@ public class Field {
 	}
 	
 	public ID toID(){
-		return new ID(startID.toBigInteger().add((startID.distanceTo(endID).divide(new BigInteger("2")))).toByteArray());
+		byte[] returnBytes = startID.toBigInteger().add(startID.distanceTo(endID).divide(new BigInteger("2"))).mod(Constants.MAXVALUE).toByteArray();
+		
+		byte[] shortenedArray = new byte[20];
+		for (int i = 1; i <= shortenedArray.length; i++) {
+			shortenedArray[shortenedArray.length - i] = returnBytes[ returnBytes.length - i];
+		}
+		return new ID(shortenedArray);
 	}
 	
 	public boolean isIDInField(ID id) {

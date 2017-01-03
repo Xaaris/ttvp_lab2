@@ -79,7 +79,7 @@ public class GameLogic {
 
 	private boolean checkIfFirstPlayer() {
 
-		BigInteger highestBigInt = new BigInteger("2").pow(160).subtract(BigInteger.ONE);
+		BigInteger highestBigInt = Constants.MAXVALUE;
 		ID highestID = ID.valueOf(highestBigInt);
 
 		return getSelf().isIDInPlayerSector(highestID);
@@ -101,6 +101,8 @@ public class GameLogic {
 				System.out.println("Shot missed!");
 				chord.broadcast(target, false);
 			}
+			Util.delay(Constants.DELAY * 5);
+			shoot();
 		}
 	}
 	
@@ -118,11 +120,14 @@ public class GameLogic {
 	public ID getTarget() {
 		Random r = new Random();
 		ID ranID = ID.valueOf(new BigInteger(160, r));
+		System.out.println(ranID + " : " + ranID.getLength());
 		// if its own fields or already shot at -> generate new random ID
 		while (getSelf().isIDInPlayerSector(ranID) || gameState.getFieldForID(ranID).getState() != FieldState.UNKNOWN) {
 			ranID = ID.valueOf(new BigInteger(160, r));
+			System.out.println(ranID + " : " + ranID.getLength());
 		}
 		// get middle of field
+		System.out.println(gameState.getFieldForID(ranID).toID() + " : " + gameState.getFieldForID(ranID).toID().getLength());
 		return gameState.getFieldForID(ranID).toID();
 	}
 
