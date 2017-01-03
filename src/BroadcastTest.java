@@ -30,7 +30,7 @@ PropertiesLoader.loadPropertyFile();
 		
 
 		ArrayList<ChordImpl> chordList = new ArrayList<>();
-		HashSet<ChordImpl> chordListForReceivedBroadcasts = new HashSet<>();
+		final HashSet<ChordImpl> chordListForReceivedBroadcasts = new HashSet<>();
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.LOCAL_PROTOCOL);
 
 		URL localURL = null;
@@ -41,7 +41,7 @@ PropertiesLoader.loadPropertyFile();
 			e1.printStackTrace();
 		}
 
-		ChordImpl chordLeader = new ChordImpl();
+		final ChordImpl chordLeader = new ChordImpl();
 
 		NotifyCallback testNotifyCallbackLeader = new NotifyCallback() {
 			
@@ -71,7 +71,7 @@ PropertiesLoader.loadPropertyFile();
 			
 			delay(200);
 			
-			ChordImpl chordJoiner = new ChordImpl();
+			final ChordImpl chordJoiner = new ChordImpl();
 			NotifyCallback testNotifyCallbackJoiner = new NotifyCallback() {
 				
 				@Override

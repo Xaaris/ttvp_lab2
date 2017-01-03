@@ -1,4 +1,5 @@
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
@@ -111,6 +112,10 @@ public class Player {
 			return false;
 		}
 		return true;
+	}
+	
+	public Field[] getPlayerFields(){
+		return playerFields;
 	}
 
 	@Override

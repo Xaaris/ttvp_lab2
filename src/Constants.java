@@ -11,9 +11,9 @@ public class Constants {
 	public static String SERVER_PORT = "8080";
 	public static String CLIENT_IP = "192.168.0.6";
 	public static String CLIENT_PORT = "8181";
-	public static String joinOrCreate = "join"; // "join" and "create"
+	public static String joinOrCreate = "create"; // "join" and "create"
 															// are valid
-	public static final int DELAY = 100; //Global delay in ms
+	public static final int DELAY = 200; //Global delay in ms
 	public static final BigInteger MAXVALUE = new BigInteger("2").pow(160).subtract(BigInteger.ONE);
 
 }
