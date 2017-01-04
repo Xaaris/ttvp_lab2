@@ -1,3 +1,4 @@
+package haw;
 import java.math.BigInteger;
 
 import de.uniba.wiai.lspi.chord.data.ID;
@@ -50,20 +51,18 @@ public class Player {
 		BigInteger currentBigInt = startID.toBigInteger();
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
 			ID lowerID = new ID(currentBigInt.toByteArray());
-			BigInteger upperIDAsBigInt = currentBigInt.add(fieldSize).subtract(BigInteger.ONE);
-			upperIDAsBigInt = upperIDAsBigInt.mod(Constants.MAXVALUE);
-			upperIDAsBigInt = Util.shortenTo20Bytes(upperIDAsBigInt);
+			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
+			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
 			ID upperID = ID.valueOf(upperIDAsBigInt);
 			currentBigInt = currentBigInt.add(fieldSize);
-			currentBigInt = currentBigInt.mod(Constants.MAXVALUE);
-			currentBigInt = Util.shortenTo20Bytes(currentBigInt);
+			currentBigInt = Util.sanitizeBigInt(currentBigInt);
 
-			Field tmpField = new Field(lowerID, upperID);
+			Field tmpField = new Field(lowerID, upperID, FieldState.UNKNOWN);
 			playerFields[i] = tmpField;
 		}
 
 		ID lowerID = new ID(currentBigInt.toByteArray());
-		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1] = new Field(lowerID, endID);
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1] = new Field(lowerID, endID, FieldState.UNKNOWN);
 
 	}
 
@@ -80,19 +79,23 @@ public class Player {
 		this.endID = newEndID;
 		BigInteger sectorSize = startID.distanceTo(endID);
 		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
+		
 		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
+//		System.out.println("NUMBEROFFIELDSINSECTOR: " + numberOfFieldsInSector);
+//		System.out.println("SECTORSIZE: " + sectorSize);
+//		System.out.println("FIELDSIZE: " + fieldSize);
+//		System.err.println("Start and endID: " + startID + " " + endID);
+//		System.err.println("First Field: " + playerFields[0]);
 //		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
 
-		BigInteger currentBigInt = startID.toBigInteger();
+		BigInteger currentBigInt = Util.sanitizeBigInt(startID.toBigInteger());
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
 			ID lowerID = new ID(currentBigInt.toByteArray());
-			BigInteger upperIDAsBigInt = currentBigInt.add(fieldSize).subtract(BigInteger.ONE);
-			upperIDAsBigInt = upperIDAsBigInt.mod(Constants.MAXVALUE);
-			upperIDAsBigInt = Util.shortenTo20Bytes(upperIDAsBigInt);
+			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
+			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
 			ID upperID = ID.valueOf(upperIDAsBigInt);
 			currentBigInt = currentBigInt.add(fieldSize);
-			currentBigInt = currentBigInt.mod(Constants.MAXVALUE);
-			currentBigInt = Util.shortenTo20Bytes(currentBigInt);
+			currentBigInt = Util.sanitizeBigInt(currentBigInt);
 
 			playerFields[i].setStartID(lowerID);
 			playerFields[i].setEndID(upperID);
@@ -101,6 +104,9 @@ public class Player {
 		ID lowerID = new ID(currentBigInt.toByteArray());
 		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(lowerID);
 		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(endID);
+//		System.out.println();
+//		System.err.println("Start and endID: " + startID + " " + endID);
+//		System.err.println("First Field: " + playerFields[0]);
 	}
 
 	public Field getFieldForID(ID id) {
@@ -119,10 +125,10 @@ public class Player {
 	}
 
 	public boolean isIDInPlayerSector(ID id) {
-		if (ID.valueOf(endID.toBigInteger().add(BigInteger.ONE)).equals(startID)){
+		if (ID.valueOf(Util.sanitizeBigInt(endID.toBigInteger().add(BigInteger.ONE))).equals(startID)){
 			return true;
 		}else{
-			return id.isInInterval(ID.valueOf(startID.toBigInteger().subtract(BigInteger.ONE)), ID.valueOf(endID.toBigInteger().add(BigInteger.ONE)));
+			return id.isInInterval(ID.valueOf(Util.sanitizeBigInt(startID.toBigInteger().subtract(BigInteger.ONE))), ID.valueOf(Util.sanitizeBigInt(endID.toBigInteger().add(BigInteger.ONE))));
 		}
 //		System.out.println("isIDInPlayerSector");
 //		System.out.println("startID: " + startID.shortIDAsString());
@@ -166,7 +172,12 @@ public class Player {
 	}
 	
 	public String toString(){
-		return "Player [" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]";
+		String retStr = "Player [" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]\n[";
+		for (int i = 0; i < playerFields.length; i++) {
+			retStr += playerFields[i].shortRepresentation();
+		}
+		retStr += "]\n";
+		return retStr;
 	}
 
 }

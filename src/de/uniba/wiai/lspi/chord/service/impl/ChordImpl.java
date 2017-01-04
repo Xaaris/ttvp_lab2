@@ -838,6 +838,9 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 
 				retrieved = true;
 			} catch (CommunicationException e1) {
+				System.out.println(e1);
+				System.out.println("ID: " + id.shortIDAsString());
+				System.out.println("responsibleNode: " + responsibleNode.getNodeID().shortIDAsString());
 				if (debug) {
 					this.logger
 							.debug(

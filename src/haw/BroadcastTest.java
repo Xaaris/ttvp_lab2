@@ -1,3 +1,4 @@
+package haw;
 import static org.junit.Assert.*;
 
 import java.math.BigInteger;

@@ -1,3 +1,4 @@
+package haw;
 import java.util.ArrayList;
 
 public class BroadcastLogger {

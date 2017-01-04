@@ -32,6 +32,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import haw.Util;
+
 //import org.apache.log4j.Logger;
 
 /**
@@ -455,14 +457,12 @@ public final class ID implements Comparable<ID>, Serializable {
 	
 	public BigInteger distanceTo(ID otherID) {
 		if (this.toBigInteger().compareTo(otherID.toBigInteger()) > 0 ) {
-			//if otherID is smaller than this ID
-//			System.out.println(this.toBigInteger() + "\nis bigger than \n" + otherID.toBigInteger());
-//			System.out.println("returns: \n" + otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger()))));
-			return otherID.toBigInteger().add((new BigInteger("2").pow(160).subtract(this.toBigInteger())));
+			BigInteger maxBigInt = new BigInteger("2").pow(160).subtract(BigInteger.ONE);
+			BigInteger thisBigInt = this.toBigInteger();
+			BigInteger otherBigInt = otherID.toBigInteger();
+			return Util.sanitizeBigInt(maxBigInt.subtract(thisBigInt).add(otherBigInt));
 		}else{
-//			System.out.println(this.toBigInteger() + "\nis smaller than \n" + otherID.toBigInteger());
-//			System.out.println("returns: \n" + otherID.toBigInteger().subtract(this.toBigInteger()));
-			return otherID.toBigInteger().subtract(this.toBigInteger());
+			return Util.sanitizeBigInt(otherID.toBigInteger().subtract(this.toBigInteger()));
 		}
 	}
 	

@@ -98,6 +98,7 @@ public final class NodeImpl extends Node {
 	private Executor asyncExecutor;
 
 	private Lock notifyLock;
+	
 
 	/**
 	 * Creates that part of the local node which answers remote requests by
@@ -362,7 +363,7 @@ public final class NodeImpl extends Node {
 	 */
 	@Override
 	public final Set<Entry> retrieveEntries(ID id) throws CommunicationException {
-
+		System.out.println("In retrieveEntries of NodeImpl now");
 		// Possible, but rare situation: a new node has joined which now is
 		// responsible for the id!
 		if ((this.references.getPredecessor() != null)
@@ -371,16 +372,22 @@ public final class NodeImpl extends Node {
 			this.logger.fatal("The rare situation has occured at time " + System.currentTimeMillis()
 					+ ", id to look up=" + id + ", id of local node=" + this.nodeID + ", id of predecessor="
 					+ this.references.getPredecessor().getNodeID());
+			System.out.println("The rare situation has occured at time " + System.currentTimeMillis()
+					+ ", id to look up=" + id + ", id of local node=" + this.nodeID + ", id of predecessor="
+					+ this.references.getPredecessor().getNodeID());
 			return this.references.getPredecessor().retrieveEntries(id);
 		}
 		// added by INET
+		
 		if (this.notifyCallback != null) {
+			System.out.println("Calling notifyCallback now");
 			notifyCallback.retrieved(id);
 		}
 		// return entries from local repository
 		// for this purpose create a copy of the Set in order to allow the
 		// thread retrieving the entries to modify the Set without modifying the
 		// internal Set of entries. sven
+		System.out.println("End of retrieveEntries ");
 		return this.entries.getEntries(id);
 	}
 
@@ -468,8 +475,9 @@ public final class NodeImpl extends Node {
 			System.out.println(this.getNodeID().shortIDAsString() + ": Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString());
 			
 			// Async Broadcast
-			this.asyncExecutor.execute(new AsyncBroadcast(fingerTable.get(i), broadcast));
-//			new AsyncBroadcast(fingerTable.get(i), broadcast).start();
+//			this.asyncExecutor.execute(new AsyncBroadcast(fingerTable.get(i), broadcast));
+			AsyncBroadcast asyncBroadcast = new AsyncBroadcast(fingerTable.get(i), broadcast);
+			new Thread(asyncBroadcast).start();
 			// Sync Broadcast
 //			fingerTable.get(i).broadcast(broadcast);
 		}

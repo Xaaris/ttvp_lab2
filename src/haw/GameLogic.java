@@ -1,6 +1,6 @@
+package haw;
 import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Scanner;
 
 import de.uniba.wiai.lspi.chord.com.Node;
@@ -38,10 +38,11 @@ public class GameLogic {
 			gameState.createPlayerFromID(id);
 		}
 		// populate self with ships
-//		ShipCreator shipCreator = Constants.shipCreator;
-//		shipCreator.createShips(getSelf().getPlayerFields());
+		ShipCreator shipCreator = Constants.shipCreator;
+		shipCreator.createShips(getSelf().getPlayerFields());
 
 		if (checkIfFirstPlayer()) {
+			Util.delay(Constants.DELAY * 5);
 			System.out.println("YAY, we are first!");
 
 			// waiting for user confirmation to open the game.
@@ -95,11 +96,15 @@ public class GameLogic {
 				System.out.println("Our ship got hit! Ships left: " + getSelf().getNumberOfShipsLeft());
 				chord.broadcast(target, true);
 			} else {
+				if (targetField.getState() == FieldState.WATER) {
+					targetField.setState(FieldState.WATER_SHOT_AT);
+				}
 				System.out.println("Shot missed!");
 				chord.broadcast(target, false);
 			}
-			Util.delay(Constants.DELAY * 5);
 			shoot();
+		}else{
+			System.err.println("RETRIEVE ON WRONG PLAYER!");
 		}
 	}
 
@@ -111,24 +116,11 @@ public class GameLogic {
 	public void shoot() {
 		Targeter targeter = Constants.targeter;
 		ID target = targeter.getTarget();
-		System.out.println("Shooting at: " + target.shortIDAsString());
-		Util.delay(Constants.DELAY);
-		chord.retrieve(target);
+		
+		
+//		chord.retrieve(target);
+		
+		new Thread(new AsyncRetrieve(chord, target)).start();
 	}
 	
-//	public ID getTarget() {
-//		Random r = new Random();
-//		ID ranID = ID.valueOf(new BigInteger(160, r));
-//		System.out.println(ranID + " : " + ranID.getLength());
-//		// if its own fields or already shot at -> generate new random ID
-//		while (getSelf().isIDInPlayerSector(ranID) || gameState.getFieldForID(ranID).getState() != FieldState.UNKNOWN) {
-//			ranID = ID.valueOf(new BigInteger(160, r));
-//			System.out.println(ranID + " : " + ranID.getLength());
-//		}
-//		// get middle of field
-//		System.out.println(gameState.getFieldForID(ranID).toID() + " : " + gameState.getFieldForID(ranID).toID().getLength());
-//		return gameState.getFieldForID(ranID).toID();
-//	}
-
-
 }

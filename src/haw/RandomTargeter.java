@@ -1,3 +1,4 @@
+package haw;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,10 +21,10 @@ public class RandomTargeter implements Targeter{
 		System.out.println("Self: " + GameState.getInstance().getSelf());
 		System.out.println("rndPlayer: " + rndPlayer);
 		System.out.println("Selected " + rndField);
-		System.out.println("Fields of rnd Player:");
-		for (Field f : rndPlayer.getPlayerFields()) {
-			System.out.println(f);
-		}
+//		System.out.println("Fields of rnd Player:");
+//		for (Field f : rndPlayer.getPlayerFields()) {
+//			System.out.println(f);
+//		}
 		boolean isInSelf = GameState.getInstance().getSelf().isIDInPlayerSector(rndField.toID());
 		System.out.println("is field in self? " + isInSelf);
 		

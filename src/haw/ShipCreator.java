@@ -1,3 +1,4 @@
+package haw;
 
 public interface ShipCreator {
 	

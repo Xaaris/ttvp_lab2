@@ -1,6 +1,19 @@
+package haw;
 
-public class WeightedRandomShipCreator{
+public class WeightedRandomShipCreator implements ShipCreator{
 
+	
+	@Override
+	public void createShips(Field[] playerFields) {
+		
+		FieldState[] fieldstates = WeightedgeneratRandomShipFormation();
+		
+		for(int i = 0; i < playerFields.length; i++){
+			playerFields[i].setState(fieldstates[i]);
+		}
+		
+	}
+	
     public static FieldState[] WeightedgeneratRandomShipFormation(){
 
         FieldState[] sea = new FieldState[Constants.NUMBEROFFIELDSINSECTOR];
@@ -52,5 +65,7 @@ public class WeightedRandomShipCreator{
         }
         return gewicht;
     }
+
+
 
 }

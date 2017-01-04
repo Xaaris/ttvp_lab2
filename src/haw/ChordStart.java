@@ -1,3 +1,4 @@
+package haw;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -93,14 +94,18 @@ public class ChordStart {
 	public static ChordImpl createNetwork(String[] args) {
 		System.out.println("WELCOME TO BATTLESHIP ON CHORD");
 		if (args.length >= 1){
-		Constants.joinOrCreate = args[0];
-		}else if (args.length >= 2){
+			Constants.joinOrCreate = args[0];
+		}
+		if (args.length >= 2){
 			Constants.SERVER_IP = args[1];
-		}else if (args.length >= 3) {
+		}
+		if (args.length >= 3) {
 			Constants.SERVER_PORT = args[2];
-		} else if (args.length >= 4) {
+		}
+		if (args.length >= 4) {
 			Constants.CLIENT_IP = args[3];
-		} else if (args.length >= 5) {
+		}
+		if (args.length >= 5) {
 			Constants.CLIENT_PORT = args[4];
 		} else {
 			System.out.println("Possible parameters are: [join or create] [ServerIP] [ServerPort] [ClientIP] [ClientPort]");

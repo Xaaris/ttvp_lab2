@@ -1,3 +1,4 @@
+package haw;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class Main {
