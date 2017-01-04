@@ -20,20 +20,18 @@ public class Field {
 	}
 	
 	public ID toID(){
-		byte[] returnBytes = startID.toBigInteger().add(startID.distanceTo(endID).divide(new BigInteger("2"))).mod(Constants.MAXVALUE).toByteArray();
-		
-		byte[] shortenedArray = new byte[20];
-		for (int i = 1; i <= shortenedArray.length; i++) {
-			shortenedArray[shortenedArray.length - i] = returnBytes[ returnBytes.length - i];
-		}
-		return new ID(shortenedArray);
+		BigInteger middle = startID.toBigInteger().add(startID.distanceTo(endID).divide(new BigInteger("2"))).mod(Constants.MAXVALUE);
+		middle = Util.shortenTo20Bytes(middle);
+		return ID.valueOf(middle);
 	}
 	
 	public boolean isIDInField(ID id) {
-		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
-			return false;
-		}
-		return true;
+		return id.isInInterval(ID.valueOf(startID.toBigInteger().subtract(BigInteger.ONE)), ID.valueOf(endID.toBigInteger().add(BigInteger.ONE)));
+//		
+//		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
+//			return false;
+//		}
+//		return true;
 	}
 
 	public FieldState getState() {
@@ -58,6 +56,10 @@ public class Field {
 	
 	public void setEndID(ID newEndID){
 		this.endID = newEndID;
+	}
+	
+	public String toString(){
+		return "Field [" + startID.shortIDAsString() + " - " + endID.shortIDAsString() + "] State: " + getState();
 	}
 	
 	

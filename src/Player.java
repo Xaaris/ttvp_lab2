@@ -1,5 +1,4 @@
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
@@ -51,8 +50,13 @@ public class Player {
 		BigInteger currentBigInt = startID.toBigInteger();
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
 			ID lowerID = new ID(currentBigInt.toByteArray());
-			ID upperID = new ID(currentBigInt.add(fieldSize).subtract(BigInteger.ONE).toByteArray());
+			BigInteger upperIDAsBigInt = currentBigInt.add(fieldSize).subtract(BigInteger.ONE);
+			upperIDAsBigInt = upperIDAsBigInt.mod(Constants.MAXVALUE);
+			upperIDAsBigInt = Util.shortenTo20Bytes(upperIDAsBigInt);
+			ID upperID = ID.valueOf(upperIDAsBigInt);
 			currentBigInt = currentBigInt.add(fieldSize);
+			currentBigInt = currentBigInt.mod(Constants.MAXVALUE);
+			currentBigInt = Util.shortenTo20Bytes(currentBigInt);
 
 			Field tmpField = new Field(lowerID, upperID);
 			playerFields[i] = tmpField;
@@ -82,8 +86,13 @@ public class Player {
 		BigInteger currentBigInt = startID.toBigInteger();
 		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
 			ID lowerID = new ID(currentBigInt.toByteArray());
-			ID upperID = new ID(currentBigInt.add(fieldSize).subtract(new BigInteger("1")).toByteArray());
+			BigInteger upperIDAsBigInt = currentBigInt.add(fieldSize).subtract(BigInteger.ONE);
+			upperIDAsBigInt = upperIDAsBigInt.mod(Constants.MAXVALUE);
+			upperIDAsBigInt = Util.shortenTo20Bytes(upperIDAsBigInt);
+			ID upperID = ID.valueOf(upperIDAsBigInt);
 			currentBigInt = currentBigInt.add(fieldSize);
+			currentBigInt = currentBigInt.mod(Constants.MAXVALUE);
+			currentBigInt = Util.shortenTo20Bytes(currentBigInt);
 
 			playerFields[i].setStartID(lowerID);
 			playerFields[i].setEndID(upperID);
@@ -101,17 +110,30 @@ public class Player {
 					return field;
 				}
 			}
+			System.out.println("SOMETHING WENT WRONG.. Field not found");
 			return null;
 		} else {
+			System.out.println("SOMETHING WENT WRONG.. Field is not in playersector");
 			return null;
 		}
 	}
 
 	public boolean isIDInPlayerSector(ID id) {
-		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
-			return false;
+		if (ID.valueOf(endID.toBigInteger().add(BigInteger.ONE)).equals(startID)){
+			return true;
+		}else{
+			return id.isInInterval(ID.valueOf(startID.toBigInteger().subtract(BigInteger.ONE)), ID.valueOf(endID.toBigInteger().add(BigInteger.ONE)));
 		}
-		return true;
+//		System.out.println("isIDInPlayerSector");
+//		System.out.println("startID: " + startID.shortIDAsString());
+//		System.out.println("endID: " + endID.shortIDAsString());
+//		System.out.println("id to compare: " + id.shortIDAsString());
+//		System.out.println("compare to gives: " + id.distanceTo(endID).compareTo(startID.distanceTo(endID)) );
+//		System.out.println("returns: " + (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0));
+//		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
+//			return false;
+//		}
+//		return true;
 	}
 	
 	public Field[] getPlayerFields(){
@@ -141,6 +163,10 @@ public class Player {
 		} else if (!endID.equals(other.endID))
 			return false;
 		return true;
+	}
+	
+	public String toString(){
+		return "Player [" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]";
 	}
 
 }

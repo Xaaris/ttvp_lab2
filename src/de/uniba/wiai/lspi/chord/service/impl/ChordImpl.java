@@ -1121,16 +1121,16 @@ public final class ChordImpl implements Chord, Report, AsynChord {
 		this.logger.debug("App called broadcast");
 
         Broadcast broadcast = new Broadcast(this.getPredecessorID(), this.localNode.getNodeID(), target,
-                this.lastSeenTransactionID + 1, hit);
+        		getLastSeenTransactionID() + 1, hit);
 
         try {
             this.localNode.broadcast(broadcast);
-            this.logger.debug("lastSeenTransactionID: " + this.lastSeenTransactionID);
-            System.out.println(this.getID().shortIDAsString() + ": lastSeenTransactionID: " + this.lastSeenTransactionID + 1);
+            setLastSeenTransactionID(getLastSeenTransactionID() + 1);
+            System.out.println(this.getID().shortIDAsString() + ": lastSeenTransactionID: " + getLastSeenTransactionID());
+            
         } catch (CommunicationException e) {
             e.printStackTrace();
         }
-        setLastSeenTransactionID(lastSeenTransactionID + 1);
 	}
 	
     public void setLastSeenTransactionID(int lastSeenTransactionID) {

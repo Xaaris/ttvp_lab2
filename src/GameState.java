@@ -2,12 +2,14 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import de.uniba.wiai.lspi.chord.data.ID;
+import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
 public class GameState {
 
 	private ArrayList<Player> listOfPlayers = new ArrayList<>();
 	private static GameState gameState = null;
 	private BroadcastLogger broadcastLogger = null;
+	private ChordImpl chord;
 
 	private GameState() {
 		listOfPlayers = new ArrayList<>();
@@ -21,8 +23,16 @@ public class GameState {
 		return gameState;
 	}
 
-	public void updateGameState() {
-		// TODO: implement, use broadcastlogger
+	public void updateGameState(BroadcastLogObject broadcast) {
+		
+		// if source not in list of ids add it
+		// if target not in list of ids add it
+		Field targetedField = getFieldForID(broadcast.getTarget());
+		if (broadcast.isHit()){
+			targetedField.setState(FieldState.SHIPWRECK);
+		}else{
+			targetedField.setState(FieldState.WATER);
+		}
 		updateLED();
 	}
 
@@ -59,12 +69,28 @@ public class GameState {
 	public ArrayList<Player> getListOfPlayers() {
 		return listOfPlayers;
 	}
+	
+	public Player getSelf() {
+		for (Player player : listOfPlayers) {
+			if (player.isIDInPlayerSector(chord.getID())) {
+				return player;
+			}
+		}
+		return null;
+	}
 
 	public ArrayList<Player> getOtherPlayers() {
 		ArrayList<Player> retList = new ArrayList<>();
-		for (int i = 1; i < listOfPlayers.size(); i++) {
-			retList.add(listOfPlayers.get(i));
+		for (Player player : listOfPlayers) {
+			retList.add(player);
 		}
+		retList.remove(getSelf());
+		System.out.println();
+		System.out.println("Self: " + getSelf());
+		for (Player player : retList) {
+			System.out.println("Other player: " + player);
+		}
+		
 		return retList;
 	}
 
@@ -75,6 +101,10 @@ public class GameState {
 			}
 		}
 		return null;
+	}
+	
+	public void setChord(ChordImpl chord) {
+		this.chord = chord;
 	}
 
 }

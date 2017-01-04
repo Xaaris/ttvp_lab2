@@ -4,7 +4,7 @@ import de.uniba.wiai.lspi.chord.com.Broadcast;
 import de.uniba.wiai.lspi.chord.com.CommunicationException;
 import de.uniba.wiai.lspi.chord.com.Node;
 
-public class AsyncBroadcast extends Thread {
+public class AsyncBroadcast implements Runnable {
 	
 	
 	Node node = null;

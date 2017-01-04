@@ -31,8 +31,6 @@ import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.DEBUG;
 import static de.uniba.wiai.lspi.util.logging.Logger.LogLevel.INFO;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -470,7 +468,8 @@ public final class NodeImpl extends Node {
 			System.out.println(this.getNodeID().shortIDAsString() + ": Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString());
 			
 			// Async Broadcast
-			new AsyncBroadcast(fingerTable.get(i), broadcast).start();
+			this.asyncExecutor.execute(new AsyncBroadcast(fingerTable.get(i), broadcast));
+//			new AsyncBroadcast(fingerTable.get(i), broadcast).start();
 			// Sync Broadcast
 //			fingerTable.get(i).broadcast(broadcast);
 		}

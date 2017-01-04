@@ -12,7 +12,7 @@ public class GameLogic {
 	private static GameLogic gameLogic = null; // for singleton
 
 	private static GameState gameState;
-	private static ChordImpl chord;
+	private ChordImpl chord;
 	private HashSet<ID> playerIDs = new HashSet<>();
 
 	private GameLogic() {
@@ -27,6 +27,8 @@ public class GameLogic {
 	}
 
 	public void initializeGame() {
+		gameState.setChord(chord);
+		// look up and create players
 		lookUpKnownNodeIDsAfterInitialization();
 		System.out.println("Known Players:");
 		for (ID id : playerIDs) {
@@ -35,6 +37,9 @@ public class GameLogic {
 		for (ID id : playerIDs) {
 			gameState.createPlayerFromID(id);
 		}
+		// populate self with ships
+//		ShipCreator shipCreator = Constants.shipCreator;
+//		shipCreator.createShips(getSelf().getPlayerFields());
 
 		if (checkIfFirstPlayer()) {
 			System.out.println("YAY, we are first!");
@@ -66,17 +71,6 @@ public class GameLogic {
 		}
 	}
 
-	
-
-	public Player getSelf() {
-		for (Player player : gameState.getListOfPlayers()) {
-			if (player.isIDInPlayerSector(chord.getID())) {
-				return player;
-			}
-		}
-		return null;
-	}
-
 	private boolean checkIfFirstPlayer() {
 
 		BigInteger highestBigInt = Constants.MAXVALUE;
@@ -84,20 +78,23 @@ public class GameLogic {
 
 		return getSelf().isIDInPlayerSector(highestID);
 	}
+	
+	public Player getSelf(){
+		return gameState.getSelf();
+	}
 
 	public void setChord(ChordImpl chord) {
-		GameLogic.chord = chord;
+		this.chord = chord;
 	}
-	
-	public void handleHit(ID target){
-		if (getSelf().isIDInPlayerSector(target)){
+
+	public void handleHit(ID target) {
+		if (getSelf().isIDInPlayerSector(target)) {
 			Field targetField = getSelf().getFieldForID(target);
-			if (targetField.getState() == FieldState.SHIP){
+			if (targetField.getState() == FieldState.SHIP) {
 				targetField.setState(FieldState.SHIPWRECK);
 				System.out.println("Our ship got hit! Ships left: " + getSelf().getNumberOfShipsLeft());
-				gameState.updateGameState();
 				chord.broadcast(target, true);
-			}else{
+			} else {
 				System.out.println("Shot missed!");
 				chord.broadcast(target, false);
 			}
@@ -105,30 +102,33 @@ public class GameLogic {
 			shoot();
 		}
 	}
-	
-	public void actOnReceivedBroadcast(BroadcastLogObject broadcast){
+
+	public void actOnReceivedBroadcast(BroadcastLogObject broadcast) {
 		BroadcastLogger.getInstance().addBroadcast(broadcast);
-		gameState.updateGameState();
+		gameState.updateGameState(broadcast);
 	}
 
 	public void shoot() {
-		ID target = getTarget();
+		Targeter targeter = Constants.targeter;
+		ID target = targeter.getTarget();
 		System.out.println("Shooting at: " + target.shortIDAsString());
+		Util.delay(Constants.DELAY);
 		chord.retrieve(target);
 	}
+	
+//	public ID getTarget() {
+//		Random r = new Random();
+//		ID ranID = ID.valueOf(new BigInteger(160, r));
+//		System.out.println(ranID + " : " + ranID.getLength());
+//		// if its own fields or already shot at -> generate new random ID
+//		while (getSelf().isIDInPlayerSector(ranID) || gameState.getFieldForID(ranID).getState() != FieldState.UNKNOWN) {
+//			ranID = ID.valueOf(new BigInteger(160, r));
+//			System.out.println(ranID + " : " + ranID.getLength());
+//		}
+//		// get middle of field
+//		System.out.println(gameState.getFieldForID(ranID).toID() + " : " + gameState.getFieldForID(ranID).toID().getLength());
+//		return gameState.getFieldForID(ranID).toID();
+//	}
 
-	public ID getTarget() {
-		Random r = new Random();
-		ID ranID = ID.valueOf(new BigInteger(160, r));
-		System.out.println(ranID + " : " + ranID.getLength());
-		// if its own fields or already shot at -> generate new random ID
-		while (getSelf().isIDInPlayerSector(ranID) || gameState.getFieldForID(ranID).getState() != FieldState.UNKNOWN) {
-			ranID = ID.valueOf(new BigInteger(160, r));
-			System.out.println(ranID + " : " + ranID.getLength());
-		}
-		// get middle of field
-		System.out.println(gameState.getFieldForID(ranID).toID() + " : " + gameState.getFieldForID(ranID).toID().getLength());
-		return gameState.getFieldForID(ranID).toID();
-	}
 
 }

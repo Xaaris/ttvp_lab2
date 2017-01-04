@@ -91,31 +91,23 @@ public class ChordStart {
 	}
 
 	public static ChordImpl createNetwork(String[] args) {
-		
-		if (args.length == 1){
+		System.out.println("WELCOME TO BATTLESHIP ON CHORD");
+		if (args.length >= 1){
 		Constants.joinOrCreate = args[0];
-		}else if (args.length == 2){
-			Constants.joinOrCreate = args[0];
+		}else if (args.length >= 2){
 			Constants.SERVER_IP = args[1];
-		}else if (args.length == 3){
-			Constants.joinOrCreate = args[0];
-			Constants.SERVER_IP = args[1];
+		}else if (args.length >= 3) {
 			Constants.SERVER_PORT = args[2];
-		}else if (args.length == 4){
-			Constants.joinOrCreate = args[0];
-			Constants.SERVER_IP = args[1];
-			Constants.SERVER_PORT = args[2];
+		} else if (args.length >= 4) {
 			Constants.CLIENT_IP = args[3];
-		}else if (args.length == 5){
-			Constants.joinOrCreate = args[0];
-			Constants.SERVER_IP = args[1];
-			Constants.SERVER_PORT = args[2];
-			Constants.CLIENT_IP = args[3];
+		} else if (args.length >= 5) {
 			Constants.CLIENT_PORT = args[4];
+		} else {
+			System.out.println("Possible parameters are: [join or create] [ServerIP] [ServerPort] [ClientIP] [ClientPort]");
 		}
-		
+
 		PropertiesLoader.loadPropertyFile();
-		
+
 		URL localURL = null;
 		try {
 			localURL = new URL(Constants.PROTOCOL + "://" + Constants.SERVER_IP + ":" + Constants.SERVER_PORT + "/");
@@ -135,6 +127,7 @@ public class ChordStart {
 			} catch (ServiceException e) {
 				throw new RuntimeException("Could not create DHT!", e);
 			}
+			System.out.println("Chord listens on: " + localURL);
 		} else if (Constants.joinOrCreate.equals("join")) {
 			URL clientURL = null;
 			try {
@@ -150,18 +143,16 @@ public class ChordStart {
 				System.out.println("Bootstrap URL: " + localURL);
 				throw new RuntimeException("Could not join DHT!", e);
 			}
+			System.out.println("Chord listens on: " + clientURL);
 		} else {
 			System.out.println("ERROR: choose if you want to be server or client!");
 		}
-		System.out.println("Chord listens on: " + localURL);
-
-		System.out.println("\n\n\n\nPress enter to start\n");
+		Util.delay(Constants.DELAY * 5);
+		System.out.println("\n\nPress enter to start\n");
 		new Scanner(System.in).nextLine();
-		
+
 		return chordImpl;
 
 	}
-	
-	
 
 }

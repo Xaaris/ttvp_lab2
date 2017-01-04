@@ -489,7 +489,12 @@ public final class ID implements Comparable<ID>, Serializable {
 			}
 
 		}
-		return this.stringRepresentation.substring(0, 5);
+		return this.stringRepresentation.substring(0, 5) + " [" + getLength() + "]";
 	}
 
+
+	
 }
+
+
+
