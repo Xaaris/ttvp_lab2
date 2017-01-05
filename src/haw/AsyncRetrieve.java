@@ -15,7 +15,7 @@ public class AsyncRetrieve implements Runnable{
 	
 	public void run() {
         
-		Util.delay(Constants.DELAY * 2);
+		Util.delay(Constants.DELAY * 10);
 		try {
 			System.out.println("Shooting at: " + target.shortIDAsString());
 			chord.retrieve(target);

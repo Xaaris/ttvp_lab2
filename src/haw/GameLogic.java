@@ -93,7 +93,7 @@ public class GameLogic {
 			Field targetField = getSelf().getFieldForID(target);
 			if (targetField.getState() == FieldState.SHIP) {
 				targetField.setState(FieldState.SHIPWRECK);
-				System.out.println("Our ship got hit! Ships left: " + getSelf().getNumberOfShipsLeft());
+				System.err.println("Our ship got hit! Ships left: " + getSelf().getNumberOfShipsLeft());
 				chord.broadcast(target, true);
 			} else {
 				if (targetField.getState() == FieldState.WATER) {

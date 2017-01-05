@@ -13,7 +13,7 @@ public class Constants {
 	public static String CLIENT_IP = "127.0.0.1";
 	public static String CLIENT_PORT = "9004";
 	public static String joinOrCreate = "join"; // "join" and "create"
-															// are valid
+
 	public static final int DELAY = 200; //Global delay in ms
 	public static final BigInteger MAXVALUE = new BigInteger("2").pow(160).subtract(BigInteger.ONE);
 	

@@ -42,7 +42,7 @@ public class Util {
 	public static BigInteger sanitizeBigInt(BigInteger bigInt) {
 //		System.out.println("Signum of : " + bigInt + " was " + bigInt.signum());
 		if (bigInt.signum() < 0) {
-//			System.out.println("Found negativ big int: " + bigInt);
+			System.out.println("Found negativ big int: " + bigInt);
 			return shortenTo20Bytes(Constants.MAXVALUE.add(bigInt));
 		} else {
 			BigInteger retInt = bigInt.mod(Constants.MAXVALUE);

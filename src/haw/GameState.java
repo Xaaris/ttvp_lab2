@@ -34,13 +34,18 @@ public class GameState {
 		if (broadcast.isHit()){
 			targetedField.setState(FieldState.SHIPWRECK);
 		}else{
-			targetedField.setState(FieldState.WATER);
+			if (targetedField.getState() == FieldState.UNKNOWN) {
+				targetedField.setState(FieldState.WATER_SHOT_AT);
+			}else if (targetedField.getState() == FieldState.WATER) {
+				targetedField.setState(FieldState.WATER_SHOT_AT);
+			}
+			
 		}
-		updateLED();
+//		updateLED();
 		System.out.println(gameState);
 	}
 
-private void updateLED() {
+	private void updateLED() {
 		
 		Player self = getSelf();
 		int shipsLeft = self.getNumberOfShipsLeft();

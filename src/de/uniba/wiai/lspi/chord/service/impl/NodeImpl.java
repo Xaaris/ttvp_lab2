@@ -435,7 +435,7 @@ public final class NodeImpl extends Node {
 		if (impl.getLastSeenTransactionID() < info.getTransaction()) {
 			impl.setLastSeenTransactionID(info.getTransaction());
 		} else {
-			System.out.println(this.getNodeID().shortIDAsString() + ": Message had old transactionID and was discarded. trnID: " + info.getTransaction());
+			System.out.println("Message had old transactionID and was discarded. trnID: " + info.getTransaction() + " source: " + info.getSource().shortIDAsString() + " target: " + info.getTarget().shortIDAsString() + " hit: " + info.getHit());
 			// If transaction id is old -> ignore broadcast
 			return;
 		}
@@ -462,7 +462,7 @@ public final class NodeImpl extends Node {
 
 			ID range;
 			
-			if (i < fingerTable.size() - 1 &&fingerTable.get(i+1).getNodeID().isInInterval(fingerTable.get(i).getNodeID(), info.getRange())) {
+			if (i < fingerTable.size() - 1 && fingerTable.get(i+1).getNodeID().isInInterval(fingerTable.get(i).getNodeID(), info.getRange())) {
 				//range to next node in fingertable
                 range = fingerTable.get(i + 1).getNodeID();
             } else {

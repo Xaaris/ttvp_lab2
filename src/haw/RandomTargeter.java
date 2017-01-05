@@ -16,17 +16,26 @@ public class RandomTargeter implements Targeter{
 	public static ID randomSelection() {
 		Player rndPlayer = randomPlayerSelection(GameState.getInstance().getOtherPlayers());
 		Field rndField = randomFieldSelection(rndPlayer.getPlayerFields());
-		System.out.println();
+//		System.out.println();
 		System.out.println("Target selection:");
-		System.out.println("Self: " + GameState.getInstance().getSelf());
-		System.out.println("rndPlayer: " + rndPlayer);
-		System.out.println("Selected " + rndField);
+//		System.out.println("Self: " + GameState.getInstance().getSelf());
+		
+//		System.out.println("Selected " + rndField);
 //		System.out.println("Fields of rnd Player:");
 //		for (Field f : rndPlayer.getPlayerFields()) {
 //			System.out.println(f);
 //		}
 		boolean isInSelf = GameState.getInstance().getSelf().isIDInPlayerSector(rndField.toID());
-		System.out.println("is field in self? " + isInSelf);
+		System.out.println("is field " + rndField.toID().shortIDAsString() + " in self? " + isInSelf);
+		if (isInSelf){
+			System.err.println("ERROR: FRIENDLY FIRE!!");
+			System.out.println("rndPlayer: " + rndPlayer);
+			System.out.println("Selected " + rndField);
+			System.out.println("Fields of rnd Player:");
+			for (Field f : rndPlayer.getPlayerFields()) {
+				System.out.println(f);
+			}
+		}
 		
 		return rndField.toID();
 	}

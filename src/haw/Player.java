@@ -172,7 +172,13 @@ public class Player {
 	}
 	
 	public String toString(){
-		String retStr = "Player [" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]\n[";
+		String retStr = ""; 
+		if (GameState.getInstance().getSelf().equals(this)){
+			retStr += "Self  "; 
+		}else{
+			retStr += "Other "; 
+		}
+		retStr += "[" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]\n[";
 		for (int i = 0; i < playerFields.length; i++) {
 			retStr += playerFields[i].shortRepresentation();
 		}
