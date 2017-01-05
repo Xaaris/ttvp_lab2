@@ -3,6 +3,11 @@ import java.math.BigInteger;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Class describing one field in a sector of a player
+ */
 public class Field {
 	
 	private FieldState state = FieldState.NOTSET;
@@ -20,32 +25,34 @@ public class Field {
 		this.state = state;
 	}
 	
+	/**
+	 * returns an ID in the Field
+	 * @return
+	 */
 	public ID toID(){
-		
-		
-		
-		BigInteger middle = startID.toBigInteger().add(startID.distanceTo(endID).divide(new BigInteger("2")));
-		middle = Util.sanitizeBigInt(middle);
-		
-//		System.out.println("In toID");
-//		System.out.println("StartID: " + startID.toBigInteger());
-//		System.out.println("endID: " + endID.toBigInteger());
-//		System.out.println("distance: " + startID.distanceTo(endID));
-//		System.out.println("distance/2: " + startID.distanceTo(endID).divide(new BigInteger("2")));
-//		System.out.println("middle: " + middle);
-		
-		return ID.valueOf(middle);
+//		BigInteger middle = startID.toBigInteger().add(startID.distanceTo(endID).divide(new BigInteger("2")));
+//		middle = Util.sanitizeBigInt(middle);
+//		
+////		System.out.println("In toID");
+////		System.out.println("StartID: " + startID.toBigInteger());
+////		System.out.println("endID: " + endID.toBigInteger());
+////		System.out.println("distance: " + startID.distanceTo(endID));
+////		System.out.println("distance/2: " + startID.distanceTo(endID).divide(new BigInteger("2")));
+////		System.out.println("middle: " + middle);
+//		
+//		return ID.valueOf(middle);
+		return ID.valueOf(startID.toBigInteger().add(BigInteger.ONE));
 	}
 	
+	/**
+	 * returns true if id is in this field, otherwise false
+	 * @param id
+	 * @return
+	 */
 	public boolean isIDInField(ID id) {
 		BigInteger lowerBound = Util.sanitizeBigInt(startID.toBigInteger().subtract(BigInteger.ONE));
 		BigInteger upperBound = Util.sanitizeBigInt(endID.toBigInteger().add(BigInteger.ONE));
 		return id.isInInterval(ID.valueOf(lowerBound), ID.valueOf(upperBound));
-//		
-//		if (id.distanceTo(endID).compareTo(startID.distanceTo(endID)) > 0) {
-//			return false;
-//		}
-//		return true;
 	}
 
 	public FieldState getState() {
@@ -54,7 +61,6 @@ public class Field {
 		}else{
 			return FieldState.NOTSET;
 		}
-		
 	}
 
 	public void setState(FieldState state) {
@@ -81,6 +87,10 @@ public class Field {
 		return "Field [" + startID.shortIDAsString() + " - " + endID.shortIDAsString() + "] State: " + getState();
 	}
 	
+	/**
+	 * returns a short representation for a field
+	 * @return
+	 */
 	public String shortRepresentation(){
 		switch (getState()) {
 		case SHIP:
@@ -100,7 +110,4 @@ public class Field {
 		}
 	}
 	
-	
-	
-
 }

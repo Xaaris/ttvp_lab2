@@ -1,6 +1,11 @@
 package haw;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Class that logs all unique received broadcasts
+ */
 public class BroadcastLogger {
 
 	private ArrayList<BroadcastLogObject> broadcastList;
@@ -25,6 +30,9 @@ public class BroadcastLogger {
 		broadcastList.add(broadcast);
 	}
 	
+	/**
+	 * prints out all logged broadcasts
+	 */
 	public void printBroadcastHistory(){
 		System.out.println("=================Broadcast History=================");
 		for (BroadcastLogObject broadcastLogObject : broadcastList) {

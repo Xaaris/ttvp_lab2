@@ -3,6 +3,11 @@ import java.math.BigInteger;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Class describing one player
+ */
 public class Player {
 
 	private ID startID;
@@ -15,6 +20,10 @@ public class Player {
 		initializeSector();
 	}
 
+	/**
+	 * 
+	 * @return int: number of ships the player has left
+	 */
 	public int getNumberOfShipsLeft() {
 		int countOfShipsLeft = Constants.MAXSHIPS;
 		for (Field field : playerFields) {
@@ -24,7 +33,11 @@ public class Player {
 		}
 		return countOfShipsLeft;
 	}
-
+	
+	/**
+	 * returns how many shots were received by this player
+	 * @return
+	 */
 	public int getNumberOfReceivedUniqueShots() {
 		int countOfFieldsNotUnknownState = 0;
 		for (Field field : playerFields) {
@@ -35,35 +48,50 @@ public class Player {
 		return countOfFieldsNotUnknownState;
 	}
 
+	/**
+	 * returns the chance for a hit when shooting at this player
+	 * @return
+	 */
 	public double getHitChanceForPlayer() {
 		int remainingShips = getNumberOfShipsLeft();
 		int remainingUnknownFields = playerFields.length - getNumberOfReceivedUniqueShots();
 		return (1.0 / remainingUnknownFields) * remainingShips;
 	}
 
+	/**
+	 * creates the player's fields and initilizes them to Unknown
+	 */
 	public void initializeSector() {
 		playerFields = new Field[Constants.NUMBEROFFIELDSINSECTOR];
 		BigInteger sectorSize = startID.distanceTo(endID);
-		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
+		BigInteger numberOfFieldsInSector = BigInteger.valueOf(Constants.NUMBEROFFIELDSINSECTOR);
 		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
 //		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
-
-		BigInteger currentBigInt = startID.toBigInteger();
-		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
-			ID lowerID = new ID(currentBigInt.toByteArray());
-			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
-			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
-			ID upperID = ID.valueOf(upperIDAsBigInt);
-			currentBigInt = currentBigInt.add(fieldSize);
-			currentBigInt = Util.sanitizeBigInt(currentBigInt);
-
+//
+		BigInteger startBigInt = startID.toBigInteger();
+		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR; i++) {
+			ID lowerID = ID.valueOf((fieldSize.multiply(BigInteger.valueOf(i)).add(startBigInt)).mod(Constants.MAXVALUE));
+			ID upperID = ID.valueOf((fieldSize.multiply(BigInteger.valueOf(i + 1)).add(startBigInt)).mod(Constants.MAXVALUE));
 			Field tmpField = new Field(lowerID, upperID, FieldState.UNKNOWN);
 			playerFields[i] = tmpField;
 		}
-
-		ID lowerID = new ID(currentBigInt.toByteArray());
-		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1] = new Field(lowerID, endID, FieldState.UNKNOWN);
-
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setEndID(endID);
+//		BigInteger currentBigInt = startID.toBigInteger();
+//		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
+//			ID lowerID = new ID(currentBigInt.toByteArray());
+//			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
+//			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
+//			ID upperID = ID.valueOf(upperIDAsBigInt);
+//			currentBigInt = currentBigInt.add(fieldSize);
+//			currentBigInt = Util.sanitizeBigInt(currentBigInt);
+//
+//			Field tmpField = new Field(lowerID, upperID, FieldState.UNKNOWN);
+//			playerFields[i] = tmpField;
+//		}
+//
+//		ID lowerID = new ID(currentBigInt.toByteArray());
+//		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1] = new Field(lowerID, endID, FieldState.UNKNOWN);
+//
 	}
 
 	public ID getStartID() {
@@ -74,12 +102,17 @@ public class Player {
 		return endID;
 	}
 	
+	/**
+	 * changes this players sector to new size
+	 * keeps all field's states
+	 * @param newStartID
+	 * @param newEndID
+	 */
 	public void changeSectorSize(ID newStartID, ID newEndID){
 		this.startID = newStartID;
 		this.endID = newEndID;
 		BigInteger sectorSize = startID.distanceTo(endID);
-		BigInteger numberOfFieldsInSector = new BigInteger("" + Constants.NUMBEROFFIELDSINSECTOR);
-		
+		BigInteger numberOfFieldsInSector = BigInteger.valueOf(Constants.NUMBEROFFIELDSINSECTOR);
 		BigInteger fieldSize = sectorSize.divide(numberOfFieldsInSector);
 //		System.out.println("NUMBEROFFIELDSINSECTOR: " + numberOfFieldsInSector);
 //		System.out.println("SECTORSIZE: " + sectorSize);
@@ -88,27 +121,42 @@ public class Player {
 //		System.err.println("First Field: " + playerFields[0]);
 //		BigInteger rest = sectorSize.mod(numberOfFieldsInSector);
 
-		BigInteger currentBigInt = Util.sanitizeBigInt(startID.toBigInteger());
-		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
-			ID lowerID = new ID(currentBigInt.toByteArray());
-			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
-			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
-			ID upperID = ID.valueOf(upperIDAsBigInt);
-			currentBigInt = currentBigInt.add(fieldSize);
-			currentBigInt = Util.sanitizeBigInt(currentBigInt);
-
-			playerFields[i].setStartID(lowerID);
-			playerFields[i].setEndID(upperID);
-		}
-
-		ID lowerID = new ID(currentBigInt.toByteArray());
-		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(lowerID);
-		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(endID);
+//		BigInteger currentBigInt = Util.sanitizeBigInt(startID.toBigInteger());
+//		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR - 1; i++) {
+//			ID lowerID = new ID(currentBigInt.toByteArray());
+//			BigInteger upperIDAsBigInt = Util.sanitizeBigInt(currentBigInt.add(fieldSize).subtract(BigInteger.ONE));
+//			upperIDAsBigInt = Util.sanitizeBigInt(upperIDAsBigInt);
+//			ID upperID = ID.valueOf(upperIDAsBigInt);
+//			currentBigInt = currentBigInt.add(fieldSize);
+//			currentBigInt = Util.sanitizeBigInt(currentBigInt);
+//
+//			playerFields[i].setStartID(lowerID);
+//			playerFields[i].setEndID(upperID);
+//		}
+//
+//		ID lowerID = new ID(currentBigInt.toByteArray());
+//		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(lowerID);
+//		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setStartID(endID);
 //		System.out.println();
 //		System.err.println("Start and endID: " + startID + " " + endID);
 //		System.err.println("First Field: " + playerFields[0]);
+		
+		BigInteger startBigInt = startID.toBigInteger();
+		for (int i = 0; i < Constants.NUMBEROFFIELDSINSECTOR; i++) {
+			ID lowerID = ID.valueOf((fieldSize.multiply(BigInteger.valueOf(i)).add(startBigInt)).mod(Constants.MAXVALUE));
+			ID upperID = ID.valueOf((fieldSize.multiply(BigInteger.valueOf(i + 1)).add(startBigInt)).mod(Constants.MAXVALUE));
+			playerFields[i].setStartID(lowerID);
+			playerFields[i].setEndID(upperID);
+		}
+		playerFields[Constants.NUMBEROFFIELDSINSECTOR - 1].setEndID(endID);
 	}
 
+	/**
+	 * returns the corresponding Field for id
+	 * returns null on Error
+	 * @param id
+	 * @return
+	 */
 	public Field getFieldForID(ID id) {
 		if (isIDInPlayerSector(id)) {
 			for (Field field : playerFields) {
@@ -124,6 +172,11 @@ public class Player {
 		}
 	}
 
+	/**
+	 * returns true if id is in this player's sector, else false
+	 * @param id
+	 * @return
+	 */
 	public boolean isIDInPlayerSector(ID id) {
 		if (ID.valueOf(Util.sanitizeBigInt(endID.toBigInteger().add(BigInteger.ONE))).equals(startID)){
 			return true;
@@ -144,6 +197,15 @@ public class Player {
 	
 	public Field[] getPlayerFields(){
 		return playerFields;
+	}
+	
+	/**
+	 * resets all playerfields to UNKNOWN
+	 */
+	public void resetPlayer(){
+		for (Field field : playerFields) {
+			field.setState(FieldState.UNKNOWN);
+		}
 	}
 
 	@Override

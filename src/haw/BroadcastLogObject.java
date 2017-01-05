@@ -1,6 +1,11 @@
 package haw;
 import de.uniba.wiai.lspi.chord.data.ID;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Object that represents one broadcast which can be logged by the broadcastlogger
+ */
 public class BroadcastLogObject {
 	
 	private ID source;

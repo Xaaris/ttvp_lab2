@@ -2,6 +2,12 @@ package haw;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Class that interfaces with the LED over Coap
+ *  
+ */
 public class COAPConnection {
 
 	public static final int LED = 0;
@@ -48,27 +54,27 @@ public class COAPConnection {
 			ledStates[BLUE] = true;
 		}
 		
-		sendMEssage("1");
-		ledStates[LED] = true;
+//		sendMEssage("1");
+//		ledStates[LED] = true;
 	}
 	
 	private void clearLED(){
-		if(ledStates[LED] == true){
+//		if(ledStates[LED] == true){
 			sendMEssage("0");
-			ledStates[LED] = false;
-		}
-		if(ledStates[RED] == true){
-			sendMEssage("r");
-			ledStates[RED] = false;	
-		}
-		if(ledStates[GREEN] == true){
-			sendMEssage("g");
-			ledStates[GREEN] = false;
-		}
-		if(ledStates[BLUE] == true){
-			sendMEssage("b");
-			ledStates[BLUE] = false;
-		}
+//			ledStates[LED] = false;
+//		}
+//		if(ledStates[RED] == true){
+//			sendMEssage("r");
+//			ledStates[RED] = false;	
+//		}
+//		if(ledStates[GREEN] == true){
+//			sendMEssage("g");
+//			ledStates[GREEN] = false;
+//		}
+//		if(ledStates[BLUE] == true){
+//			sendMEssage("b");
+//			ledStates[BLUE] = false;
+//		}
 	}
 	
 	private void sendMEssage(String message){

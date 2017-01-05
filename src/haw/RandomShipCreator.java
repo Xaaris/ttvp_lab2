@@ -1,5 +1,10 @@
 package haw;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * sets ships randomly
+ */
 public class RandomShipCreator implements ShipCreator {
 
 	public static FieldState[] generatRandomShipFormation() {

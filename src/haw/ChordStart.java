@@ -12,12 +12,19 @@ import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Class that is used to start a local or distributed chord network
+ */
 public class ChordStart {
 	
-	public ChordStart(){
-		
-	}
-
+	public ChordStart(){}
+	
+	/**
+	 * creates a local chord network with 5 nodes for testing purposes
+	 * @return
+	 */
 	public static ChordImpl createLocalNetwork() {
 
 		PropertiesLoader.loadPropertyFile();
@@ -91,6 +98,12 @@ public class ChordStart {
 		
 	}
 
+	/**
+	 * creates a node of a chord network according to the 
+	 * data provided in Constants or args if there are any
+	 * @param args
+	 * @return the chordimpl
+	 */
 	public static ChordImpl createNetwork(String[] args) {
 		System.out.println("WELCOME TO BATTLESHIP ON CHORD");
 		if (args.length >= 1){

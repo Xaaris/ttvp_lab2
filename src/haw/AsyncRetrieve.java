@@ -3,6 +3,11 @@ import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.service.Chord;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Asynchronously shoots after small delay
+ */
 public class AsyncRetrieve implements Runnable{
 	
 	Chord chord = null;
@@ -15,7 +20,7 @@ public class AsyncRetrieve implements Runnable{
 	
 	public void run() {
         
-		Util.delay(Constants.DELAY * 10);
+		Util.delay(Constants.DELAY * 5);
 		try {
 			System.out.println("Shooting at: " + target.shortIDAsString());
 			chord.retrieve(target);

@@ -1,24 +1,32 @@
 package haw;
-import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Scanner;
 
-import de.uniba.wiai.lspi.chord.com.Node;
 import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Methods for the Game logic
+ */
 public class GameLogic {
 
 	private static GameLogic gameLogic = null; // for singleton
 
 	private static GameState gameState;
 	private ChordImpl chord;
-	private HashSet<ID> playerIDs = new HashSet<>();
+	
 
+	private Player lastTarget = null;
+	
 	private GameLogic() {
 		gameState = GameState.getInstance();
 	}
 
+	/**
+	 * singleton creation
+	 * @return
+	 */
 	public static GameLogic getInstance() {
 		if (gameLogic == null) {
 			gameLogic = new GameLogic();
@@ -26,17 +34,16 @@ public class GameLogic {
 		return gameLogic;
 	}
 
+	/**
+	 * initializes the game by looking up  and creating known players
+	 * afterwards checks if self is first player and in that case starts shooting
+	 */
 	public void initializeGame() {
 		gameState.setChord(chord);
 		// look up and create players
-		lookUpKnownNodeIDsAfterInitialization();
-		System.out.println("Known Players:");
-		for (ID id : playerIDs) {
-			System.out.println(id.shortIDAsString());
-		}
-		for (ID id : playerIDs) {
-			gameState.createPlayerFromID(id);
-		}
+		gameState.lookUpKnownNodeIDsAfterInitialization();
+		
+		gameState.createKnownPlayers();
 		// populate self with ships
 		ShipCreator shipCreator = Constants.shipCreator;
 		shipCreator.createShips(getSelf().getPlayerFields());
@@ -57,26 +64,11 @@ public class GameLogic {
 	}
 
 	/**
-	 * looks up all nodes that are known after initialization. might not be all
-	 * 
-	 * @return list of node IDs
+	 * returns a bool that says if biggest ID is in this players field
+	 * @return
 	 */
-	private void lookUpKnownNodeIDsAfterInitialization() {
-
-		playerIDs.add(chord.getID());
-		if (chord.getPredecessorID() != null) {
-			playerIDs.add(chord.getPredecessorID());
-		}
-		for (Node node : chord.getFingerTable()) {
-			playerIDs.add(node.getNodeID());
-		}
-	}
-
 	private boolean checkIfFirstPlayer() {
-
-		BigInteger highestBigInt = Constants.MAXVALUE;
-		ID highestID = ID.valueOf(highestBigInt);
-
+		ID highestID = ID.valueOf(Constants.MAXVALUE);
 		return getSelf().isIDInPlayerSector(highestID);
 	}
 	
@@ -88,6 +80,12 @@ public class GameLogic {
 		this.chord = chord;
 	}
 
+	/**
+	 * updates the gamestate accordingly. 
+	 * sends a broadcast back with the result of the shot
+	 * shoots as long as game is not over yet
+	 * @param target
+	 */
 	public void handleHit(ID target) {
 		if (getSelf().isIDInPlayerSector(target)) {
 			Field targetField = getSelf().getFieldForID(target);
@@ -102,24 +100,63 @@ public class GameLogic {
 				System.out.println("Shot missed!");
 				chord.broadcast(target, false);
 			}
-			shoot();
+			if (!Constants.GAME_OVER) {
+				shoot();
+			}
 		}else{
 			System.err.println("RETRIEVE ON WRONG PLAYER!");
 		}
 	}
 
+	/**
+	 * logs received broadcast and updates gamestate. also checks if game is over
+	 * @param broadcast
+	 */
 	public void actOnReceivedBroadcast(BroadcastLogObject broadcast) {
 		BroadcastLogger.getInstance().addBroadcast(broadcast);
 		gameState.updateGameState(broadcast);
+		if(lastTarget != null){
+			if (gameState.weWon(broadcast, lastTarget)){
+				Constants.GAME_OVER = true;
+				winning();
+			}
+		}
+	}
+	
+	/**
+	 * prints winning message -> endless loop
+	 */
+	public void winning(){
+		for (int i = 0; i < 100; i++) {
+			System.out.println();
+			System.out.print("*");
+		}
+		System.err.println("\n\nWE WON!\n\nThe following player is dead:\n");
+		for (Player otherPlayer : gameState.getOtherPlayers()) {
+			if (otherPlayer.getNumberOfShipsLeft() < 1){
+				System.out.println(otherPlayer + "\n");
+			}
+		}
+		for (int i = 0; i < 100; i++) {
+			System.out.print("*");
+		}
+		System.out.println();
+		System.out.println();
+		BroadcastLogger.getInstance().printBroadcastHistory();
+		while (true){Util.delay(1000);} //Endless loop, game ended
 	}
 
+	/**
+	 * searches for a target and shoots at it asynchronously
+	 */
 	public void shoot() {
 		Targeter targeter = Constants.targeter;
 		ID target = targeter.getTarget();
 		
+		lastTarget = gameState.getPlayerForID(target);
+//		chord.retrieve(target); // sync retrive
 		
-//		chord.retrieve(target);
-		
+		//async retrieve
 		new Thread(new AsyncRetrieve(chord, target)).start();
 	}
 	

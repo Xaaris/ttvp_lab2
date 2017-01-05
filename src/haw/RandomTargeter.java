@@ -4,6 +4,11 @@ import java.util.Random;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * A targeter that selects a target at random
+ */
 public class RandomTargeter implements Targeter{
 	
 	static Random rnd = new Random();
@@ -46,10 +51,13 @@ public class RandomTargeter implements Targeter{
 	}
 
 	public static Field randomFieldSelection(Field[] fieldArr) {
-		int randomIndex = rnd.nextInt(fieldArr.length);
-		while (fieldArr[randomIndex].getState() != FieldState.UNKNOWN){
+		System.out.println("in randomFieldSelection");
+		System.out.println("fieldArr.length "+ fieldArr.length);
+		int randomIndex; 
+		do{
 			randomIndex = rnd.nextInt(fieldArr.length);
-		}
+			System.out.println("Index: " + randomIndex + " " + fieldArr[randomIndex]);
+		}while (fieldArr[randomIndex].getState() != FieldState.UNKNOWN);
 		return fieldArr[randomIndex];
 	}
 

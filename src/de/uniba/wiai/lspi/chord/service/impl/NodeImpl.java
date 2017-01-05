@@ -421,7 +421,7 @@ public final class NodeImpl extends Node {
 	@Override
 	public final void broadcast(Broadcast info) throws CommunicationException {
 
-//		System.out.println("NodeImpl Broadcast of node: " + impl.getURL());
+		System.out.println("NodeImpl Broadcast to "+ info.getTarget() + " hit " + info.getHit());
 		if (this.logger.isEnabledFor(DEBUG)) {
 			this.logger.debug(" Send broadcast message");
 		}
@@ -457,7 +457,7 @@ public final class NodeImpl extends Node {
 			
 			if (distanceToOtherNode.compareTo(distanceToRange) > 0) {
 				System.out.println("============RAUSGEFLOGEN=================\ndistanceToOtherNode: " + ID.valueOf(distanceToOtherNode).shortIDAsString() + "\ndistanceToRange: " + ID.valueOf(distanceToRange).shortIDAsString() + "\nnodeID: " + this.getNodeID().shortIDAsString() + "\notherNoderID: " + fingerTable.get(i).getNodeID().shortIDAsString() + "\nrange: " + info.getRange().shortIDAsString() + "\n=========================================");
-				return;
+				continue;
 			}
 
 			ID range;
@@ -472,7 +472,7 @@ public final class NodeImpl extends Node {
 
 			Broadcast broadcast = new Broadcast(range, info.getSource(), info.getTarget(), info.getTransaction(),
 					info.getHit());
-			System.out.println(this.getNodeID().shortIDAsString() + ": Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString());
+			System.out.println("Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString() + " target: " + info.getTarget() + " hit " + info.getHit() + " trnsID " + info.getTransaction());
 			
 			// Async Broadcast
 //			this.asyncExecutor.execute(new AsyncBroadcast(fingerTable.get(i), broadcast));

@@ -18,6 +18,11 @@ import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
+/**
+ * 
+ * @author Johannes & Erik
+ * Unit test for broadcast
+ */
 public class BroadcastTest {
 
 	@BeforeClass

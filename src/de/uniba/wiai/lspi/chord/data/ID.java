@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import haw.Constants;
 import haw.Util;
 
 //import org.apache.log4j.Logger;
@@ -455,15 +456,23 @@ public final class ID implements Comparable<ID>, Serializable {
 				.compareTo(toID) < 0));
 	}
 	
+	/**
+	 * Calculates the distance from this.ID to otherID
+	 * @param otherID
+	 * @return distance as BigInt
+	 */
 	public BigInteger distanceTo(ID otherID) {
-		if (this.toBigInteger().compareTo(otherID.toBigInteger()) > 0 ) {
-			BigInteger maxBigInt = new BigInteger("2").pow(160).subtract(BigInteger.ONE);
-			BigInteger thisBigInt = this.toBigInteger();
-			BigInteger otherBigInt = otherID.toBigInteger();
-			return Util.sanitizeBigInt(maxBigInt.subtract(thisBigInt).add(otherBigInt));
-		}else{
-			return Util.sanitizeBigInt(otherID.toBigInteger().subtract(this.toBigInteger()));
-		}
+		BigInteger thisBigInt = Util.sanitizeBigInt(this.toBigInteger());
+		BigInteger otherBigInt = Util.sanitizeBigInt(otherID.toBigInteger());
+		BigInteger maxBigInt = Constants.MAXVALUE;
+		
+		return otherBigInt.subtract(thisBigInt).mod(maxBigInt);
+//		if (thisBigInt.compareTo(otherBigInt) > 0 ) {
+//			return Util.sanitizeBigInt(maxBigInt.subtract(thisBigInt).add(otherBigInt));
+//			
+//		}else{
+//			return Util.sanitizeBigInt(otherBigInt.subtract(thisBigInt));
+//		}
 	}
 	
 	/**
