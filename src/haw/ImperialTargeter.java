@@ -20,7 +20,7 @@ public class ImperialTargeter implements Targeter {
 		if( zeroShipedPlayer == null){
 		
 			// check for Player with 2 Ships
-			removeTwoShipPlayers(otherPlayerList);
+			otherPlayerList = removeTwoShipPlayers(otherPlayerList);
 			
 			// check for Player with 1 Ship
 			checkForPlayersWithOneShip(otherPlayerList);
@@ -67,7 +67,7 @@ public class ImperialTargeter implements Targeter {
 	}
 	
 	private Player searchForTargetPlayer(ArrayList<Player> otherPlayerList) {
-		double hitchance = 0;
+		double hitchance = -1000;
 		Player targetPlayer = null;
 		Collections.shuffle(otherPlayerList);
 		
@@ -93,19 +93,18 @@ public class ImperialTargeter implements Targeter {
 		}
 	}
 	
-	private void removeTwoShipPlayers(ArrayList<Player> otherPlayerList){
-		//otherwise concurrent modification exception
-		ArrayList<Player> playersWithTwoShips = new ArrayList<>();
+	private ArrayList<Player> removeTwoShipPlayers(ArrayList<Player> otherPlayerList){
+		ArrayList<Player> playersLeft = new ArrayList<>();
 		for (Player player : otherPlayerList) {
-			if(player.getNumberOfShipsLeft() == 2){
-				playersWithTwoShips.add(player);
+			if(player.getNumberOfShipsLeft() != 2){
+				playersLeft.add(player);
 			}
 		}
-		for (Player player : playersWithTwoShips) {
-			otherPlayerList.remove(player);
-		}
-		if(otherPlayerList.isEmpty()){ // es gibt nur noch Spieler mit 2 Schiffen
-			otherPlayerList = GameState.getInstance().getOtherPlayers();
+		
+		if(playersLeft.isEmpty()){ 
+			return otherPlayerList;
+		}else{
+			return playersLeft;
 		}
 	}
 

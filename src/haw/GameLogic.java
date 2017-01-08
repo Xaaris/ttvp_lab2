@@ -127,21 +127,21 @@ public class GameLogic {
 	 * prints winning message -> endless loop
 	 */
 	public void winning(){
+		System.err.println();
 		for (int i = 0; i < 100; i++) {
-			System.out.println();
-			System.out.print("*");
+			System.err.print("*");
 		}
 		System.err.println("\n\nWE WON!\n\nThe following player is dead:\n");
 		for (Player otherPlayer : gameState.getOtherPlayers()) {
 			if (otherPlayer.getNumberOfShipsLeft() < 1){
-				System.out.println(otherPlayer + "\n");
+				System.err.println(otherPlayer + "\n");
 			}
 		}
 		for (int i = 0; i < 100; i++) {
-			System.out.print("*");
+			System.err.print("*");
 		}
-		System.out.println();
-		System.out.println();
+		System.err.println();
+		System.err.println();
 		BroadcastLogger.getInstance().printBroadcastHistory();
 		while (true){Util.delay(1000);} //Endless loop, game ended
 	}
