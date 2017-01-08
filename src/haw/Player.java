@@ -240,7 +240,7 @@ public class Player {
 		}else{
 			retStr += "Other "; 
 		}
-		retStr += "[" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "]\n[";
+		retStr += "[" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "] Ships left: " + getNumberOfShipsLeft() + "\n[";
 		for (int i = 0; i < playerFields.length; i++) {
 			retStr += playerFields[i].shortRepresentation();
 		}
