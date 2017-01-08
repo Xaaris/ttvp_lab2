@@ -421,7 +421,7 @@ public final class NodeImpl extends Node {
 	@Override
 	public final void broadcast(Broadcast info) throws CommunicationException {
 
-		System.out.println("NodeImpl Broadcast to "+ info.getTarget() + " hit " + info.getHit());
+		System.out.println("NodeImpl Broadcast to "+ info.getTarget().shortIDAsString() + " hit " + info.getHit());
 		if (this.logger.isEnabledFor(DEBUG)) {
 			this.logger.debug(" Send broadcast message");
 		}
@@ -472,7 +472,7 @@ public final class NodeImpl extends Node {
 
 			Broadcast broadcast = new Broadcast(range, info.getSource(), info.getTarget(), info.getTransaction(),
 					info.getHit());
-			System.out.println("Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString() + " target: " + info.getTarget() + " hit " + info.getHit() + " trnsID " + info.getTransaction());
+			System.out.println("Sending Broadcast to: " + fingerTable.get(i).getNodeID().shortIDAsString() + " target: " + info.getTarget().shortIDAsString() + " hit " + info.getHit() + " trnsID " + info.getTransaction());
 			
 			// Async Broadcast
 //			this.asyncExecutor.execute(new AsyncBroadcast(fingerTable.get(i), broadcast));

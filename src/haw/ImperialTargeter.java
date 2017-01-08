@@ -3,6 +3,7 @@ package haw;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 import de.uniba.wiai.lspi.chord.data.ID;
 
@@ -23,7 +24,7 @@ public class ImperialTargeter implements Targeter {
 			otherPlayerList = removeTwoShipPlayers(otherPlayerList);
 			
 			// check for Player with 1 Ship
-			checkForPlayersWithOneShip(otherPlayerList);
+			otherPlayerList = checkForPlayersWithOneShip(otherPlayerList);
 			
 			// make something up => find a target
 			Player player = searchForTargetPlayer(otherPlayerList);
@@ -51,17 +52,10 @@ public class ImperialTargeter implements Targeter {
 	private Field getTargetFieldFromPlayer(Player player) {
 		Field targetField = null;
 		Field[] playerFields = player.getPlayerFields();
-		while(targetField == null){
-			int randomIndex = (int)(Math.random()*playerFields.length);
-			
-			if(randomIndex >= 0 && randomIndex < playerFields.length){
-				if(playerFields[randomIndex].getState() == FieldState.UNKNOWN){
-					targetField = playerFields[randomIndex];
-				}
-			}
-			
-		}
-		
+		Random rnd = new Random();
+		do {
+			targetField = playerFields[rnd.nextInt(Constants.NUMBEROFFIELDSINSECTOR)];
+		} while (targetField.getState() != FieldState.UNKNOWN);
 		
 		return targetField;
 	}
@@ -81,15 +75,17 @@ public class ImperialTargeter implements Targeter {
 		return targetPlayer;
 	}
 		
-	private void checkForPlayersWithOneShip(ArrayList<Player> otherPlayerList){
+	private ArrayList<Player> checkForPlayersWithOneShip(ArrayList<Player> otherPlayerList){
 		ArrayList<Player> oneShipedPlayerList =  new ArrayList<>();
 		for (Player player : otherPlayerList) {
 			if(player.getNumberOfShipsLeft() == 1){
 				oneShipedPlayerList.add(player);
 			}
 		}
-		if(!oneShipedPlayerList.isEmpty()){ // Es gibt Spieler mit nur noch einem Schiff
-			otherPlayerList = oneShipedPlayerList;
+		if(oneShipedPlayerList.isEmpty()){
+			return otherPlayerList;
+		}else{
+			return oneShipedPlayerList;
 		}
 	}
 	

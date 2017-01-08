@@ -39,13 +39,13 @@ public class Player {
 	 * @return
 	 */
 	public int getNumberOfReceivedUniqueShots() {
-		int countOfFieldsNotUnknownState = 0;
+		int numberOfShots = 0;
 		for (Field field : playerFields) {
-			if (field.getState() != FieldState.UNKNOWN) {
-				countOfFieldsNotUnknownState++;
+			if (field.getState() == FieldState.WATER_SHOT_AT || field.getState() == FieldState.SHIPWRECK) {
+				numberOfShots++;
 			}
 		}
-		return countOfFieldsNotUnknownState;
+		return numberOfShots;
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class Player {
 		}else{
 			retStr += "Other "; 
 		}
-		retStr += "[" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "] Ships left: " + getNumberOfShipsLeft() + "\n[";
+		retStr += "[" +startID.shortIDAsString() + " - " + endID.shortIDAsString() + "] Received shots: " + getNumberOfReceivedUniqueShots() + " Ships left: " + getNumberOfShipsLeft() + "\n[";
 		for (int i = 0; i < playerFields.length; i++) {
 			retStr += playerFields[i].shortRepresentation();
 		}

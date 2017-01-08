@@ -76,7 +76,8 @@ public class GameState {
 //		System.out.println("In updateGameState");
 //		System.out.println("Broadcast: source: " + broadcast.getSource() +  " target: " + broadcast.getTarget() + " hit: " + broadcast.isHit());
 		if (!playerIDs.contains(broadcast.getSource())){
-			System.err.println("NEW PLAYER JOINED WITH ID: " + broadcast.getSource().shortIDAsString());
+			playerIDs.add(broadcast.getSource());
+			System.err.println("NEW PLAYER JOINED WITH ID: " + broadcast.getSource());
 			createPlayerFromID(broadcast.getSource());
 			rebuildGameState();
 		}
